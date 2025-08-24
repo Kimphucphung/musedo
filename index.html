@@ -39,39 +39,49 @@
 
   <!-- NAV BAR -->
 <nav class="sticky top-0 z-50 bg-white/50 backdrop-blur-xl border-b border-white/40 shadow-glass">
-  <div class="relative mx-auto max-w-6xl px-4 sm:px-6 py-2">
-    <!-- brand ở giữa -->
-    <div class="text-center">
-      <div class="text-2xl sm:text-3xl font-black tracking-tight select-none">muse.do</div>
+  <div class="relative mx-auto max-w-6xl px-4 sm:px-6 py-3 md:py-4 min-h-[56px] md:min-h-[64px] flex items-center md:justify-between">
+    <!-- BRAND: mobile ở giữa (absolute), desktop bên trái (static) -->
+    <div class="absolute left-1/2 -translate-x-1/2 md:static md:left-auto md:translate-x-0">
+      <div class="text-2xl md:text-3xl font-black tracking-tight select-none text-center md:text-left">muse.do
+      </div>
     </div>
-
-    <!-- nút hamburger chỉ hiện trên mobile -->
+    <!-- HAMBURGER: chỉ mobile, đặt absolute bên phải -->
     <button id="menuBtn"
-      class="md:hidden absolute right-4 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-white/70"
+      class="md:hidden absolute right-4 top-1/2 -translate-y-1/2
+             inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-white/70"
       aria-label="Open menu">
-      <!-- icon 3 gạch -->
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="3" y1="6"  x2="21" y2="6"/>
         <line x1="3" y1="12" x2="21" y2="12"/>
         <line x1="3" y1="18" x2="21" y2="18"/>
       </svg>
     </button>
-
-    <!-- tabs: chỉ hiện ở desktop -->
-    <div class="hidden md:flex items-center gap-4 absolute right-4 top-1/2 -translate-y-1/2">
-      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="tasks">Tasks</button>
-      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="garden">Garden</button>
-      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="timer">Timer</button>
-      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="quotes">Quotes</button>
+    <!-- Tabs + Auth (chỉ desktop, nằm bên phải) -->
+    <div class="order-3 hidden md:flex items-center gap-4 ml-auto">
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
+                     data-[active=true]:bg-rose-400 data-[active=true]:text-white"
+              data-tab="tasks">Tasks</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
+                     data-[active=true]:bg-rose-400 data-[active=true]:text-white"
+              data-tab="garden">Garden</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
+                     data-[active=true]:bg-rose-400 data-[active=true]:text-white"
+              data-tab="timer">Timer</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
+                     data-[active=true]:bg-rose-400 data-[active=true]:text-white"
+              data-tab="quotes">Quotes</button>
+      <!-- Auth (desktop) -->
+      <div id="authBox" class="text-sm flex items-center gap-2">
+        <span id="authStatus" class="opacity-70">Not signed in</span>
+        <button id="btnGoogle" class="px-3 py-1 rounded-full bg-white/70 hover:bg-white">
+          Sign in with Google
+        </button>
+        <button id="btnSignOut" class="hidden px-3 py-1 rounded-full bg-white/70 hover:bg-white">
+          Sign out
+        </button>
+      </div>
     </div>
   </div>
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-2 hidden md:flex justify-end">
-  <div id="authBox" class="text-sm flex items-center gap-2">
-    <span id="authStatus" class="opacity-70">Not signed in</span>
-    <button id="btnGoogle" class="px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign in with Google</button>
-    <button id="btnSignOut" class="hidden px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign out</button>
-  </div>
-</div>
 </nav>
 
 <!-- MOBILE SIDE DRAWER (NEW) -->
