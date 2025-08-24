@@ -23,8 +23,7 @@
     .blob{filter:blur(60px);opacity:.7}
     /* Garden visuals */
     .garden-water {background: radial-gradient(120% 120% at 50% 0%, #fdf2f8 0%, #ffe4e6 35%, #fbcfe8 70%, #f5d0fe 100%);} 
-    .island {position:relative;width:90%;max-width:760px;margin: auto; height:380px;border-radius:50% 50% 45% 55% / 60% 40% 60% 40%;background: radial-gradient(60% 60% at 50% 40%, #bbf7d0 0%, #86efac 45%, #22c55e 60%, #16a34a 75%, #0ea5e9 120%);box-shadow: inset 0 8px 30px rgba(0,0,0,.15), 0 15px 40px rgba(0,0,0,.25);} 
-    .flower {position:absolute; transform-origin: bottom center;} 
+    .island {position:relative;width:90%;max-width:760px;margin: auto; height:380px;border-radius:50% 50% 45% 55% / 60% 40% 60% 40%;background: radial-gradient(60% 60% at 50% 40%, #bbf7d0 0%, #86efac 45%, #22c55e 60%, #16a34a 75%, #0ea5e9 120%);box-shadow: inset 0 8px 30px rgba(0,0,0,.15), 0 15px 40px rgba(0,0,0,.25);}    .flower {position:absolute; transform-origin: bottom center;} 
     .flower svg {filter: drop-shadow(0 6px 10px rgba(0,0,0,.1));}
     .flower.sm {transform: translate(-50%, -100%) scale(.8)  rotate(var(--rot,0deg));}
     .flower.md {transform: translate(-50%, -100%) scale(1)    rotate(var(--rot,0deg));}
@@ -34,24 +33,67 @@
 <body class="min-h-screen text-rose-900 relative overflow-x-hidden">
   <!-- dreamy backdrop -->
   <div class="absolute inset-0 -z-10 bg-gradient-to-b from-pink-100 via-rose-100 to-fuchsia-100"></div>
-  <div class="blob absolute -top-24 -left-28 h-80 w-80 rounded-full bg-pink-200"></div>
-  <div class="blob absolute top-40 -right-20 h-96 w-96 rounded-full bg-fuchsia-200"></div>
-  <div class="blob absolute bottom-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose-200"></div>
+  <div class="blob fixed -top-24 -left-28 h-80 w-80 rounded-full bg-pink-200"></div>
+  <div class="blob fixed top-40 -right-20 h-96 w-96 rounded-full bg-fuchsia-200"></div>
+  <div class="blob fixed bottom-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose-200"></div>
 
   <!-- NAV BAR -->
-  <nav class="sticky top-0 z-50 bg-white/50 backdrop-blur-xl border-b border-white/40 shadow-glass">
-    <div class="mx-auto max-w-6xl flex items-center gap-4 px-4 sm:px-6 py-2">
-      <!-- brand at far-left -->
+<nav class="sticky top-0 z-50 bg-white/50 backdrop-blur-xl border-b border-white/40 shadow-glass">
+  <div class="relative mx-auto max-w-6xl px-4 sm:px-6 py-2">
+    <!-- brand ở giữa -->
+    <div class="text-center">
       <div class="text-2xl sm:text-3xl font-black tracking-tight select-none">muse.do</div>
-      <!-- tabs -->
-      <div class="ml-auto flex items-center gap-2 sm:gap-4">
-        <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="tasks">Tasks</button>
-        <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="garden">Garden</button>
-        <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="timer">Timer</button>
-        <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="quotes">Quotes</button>
-      </div>
     </div>
-  </nav>
+
+    <!-- nút hamburger chỉ hiện trên mobile -->
+    <button id="menuBtn"
+      class="md:hidden absolute right-4 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-white/70"
+      aria-label="Open menu">
+      <!-- icon 3 gạch -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+    <!-- tabs: chỉ hiện ở desktop -->
+    <div class="hidden md:flex items-center gap-4 absolute right-4 top-1/2 -translate-y-1/2">
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="tasks">Tasks</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="garden">Garden</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="timer">Timer</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70 data-[active=true]:bg-rose-400 data-[active=true]:text-white" data-tab="quotes">Quotes</button>
+    </div>
+  </div>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-2 flex justify-end">
+  <div id="authBox" class="text-sm flex items-center gap-2">
+    <span id="authStatus" class="opacity-70">Not signed in</span>
+    <button id="btnGoogle" class="px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign in with Google</button>
+    <button id="btnSignOut" class="hidden px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign out</button>
+  </div>
+</div>
+</nav>
+
+<!-- MOBILE SIDE DRAWER (NEW) -->
+<div id="mobileSheet" class="fixed inset-0 z-50 hidden">
+  <!-- overlay -->
+  <div id="sheetOverlay" class="absolute inset-0 bg-black/20 backdrop-blur-[2px]"></div>
+  <!-- panel -->
+  <div id="sheetPanel"
+       class="absolute right-0 top-0 h-full w-64 max-w-[80%] bg-white/90 backdrop-blur-xl border-l border-white/60 shadow-xl
+              translate-x-full transition-transform duration-300">
+    <div class="p-4 border-b border-white/60 flex items-center justify-between">
+      <div class="font-bold">Menu</div>
+      <button id="sheetClose" class="h-8 w-8 rounded-full hover:bg-white/70" aria-label="Close">✕</button>
+    </div>
+    <div class="p-3 flex flex-col gap-2">
+      <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="tasks">Tasks</button>
+      <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="garden">Garden</button>
+      <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="timer">Timer</button>
+      <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="quotes">Quotes</button>
+    </div>
+  </div>
+</div>
 
   <main>
     <!-- ============ TAB: TASKS ============ -->
@@ -81,17 +123,16 @@
     </div>
   </header>
 
-
       <section class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 pb-16 md:grid-cols-[300px_1fr] lg:grid-cols-[300px_minmax(400px,1fr)_360px]">
-        <!-- Callendar -->
+        <!-- Calendar -->
         <aside class="rounded-3xl p-4 md:p-5 backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
           <div class="mb-3 flex items-center justify-between">
             <button id="prevMonth" class="rounded-full p-2 hover:bg-white/70">
-              <div class="flex items-center justify-center"><img src="/Asset/left-arrow.png" alt="" class="h-4 object-contain rounded-xl "></div>
+              <div class="flex items-center justify-center"><img src="Asset/left-arrow.png" alt="" class="h-4 object-contain rounded-xl "></div>
             </button>
             <div id="monthLabel" class="font-semibold flex items-center gap-2">📅</div>
             <button id="nextMonth" class="rounded-full p-2 hover:bg-white/70">
-              <div class="flex items-center justify-center"><img src="/Asset/right-arrow.png" alt="" class="h-4 object-contain rounded-xl "></div>
+              <div class="flex items-center justify-center"><img src="Asset/right-arrow.png" alt="" class="h-4 object-contain rounded-xl "></div>
             </button>
           </div>
           <div class="grid grid-cols-7 text-center text-xs font-medium text-rose-600/80">
@@ -134,7 +175,7 @@
         </section>
 
         <!-- Statistic -->
-        <aside class="hidden lg:block rounded-3xl p-4 backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
+        <aside class="block rounded-3xl p-4 backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
           <div class="mb-3 flex items-center justify-between"><h3 class="text-lg font-bold">Stats & Patterns</h3><div id="statsMonth" class="text-xs text-rose-700/70"></div></div>
           <div class="h-40 w-full rounded-2xl bg-white/70 p-2"><canvas id="barChart" height="140"></canvas></div>
           <div class="mt-3 grid grid-cols-2 gap-3">
@@ -154,7 +195,7 @@
         <div class="flex items-center justify-between"><h2 class="text-2xl font-bold">Achievement Garden 🌱</h2><div class="text-xs text-rose-700/70" id="gardenMonth"></div></div>
         <div class="garden-water mt-4 rounded-3xl p-4"><div class="island mx-auto relative" id="gardenCanvas"></div></div>
         <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-          <div class="rounded-2xl bg-white/70 p-3"><div class="font-semibold">Rules</div><div>Complete <b>every day tasks</b> will plant <b>a flower</b>.</div><div>2–4 task → <b>small</b>flower, 5–6 → <b>medium</b>, ≥7 → <b>big</b>.</div></div>
+          <div class="rounded-2xl bg-white/70 p-3"><div class="font-semibold">Rules</div><div>Complete <b>every day tasks</b> will plant <b>a flower</b>.</div><div>2–4 task → <b>small</b> flower, 5–6 → <b>medium</b>, ≥7 → <b>big</b>.</div></div>
           <div class="rounded-2xl bg-white/70 p-3"><div class="font-semibold">Today</div><div id="gardenToday"></div></div>
           <div class="rounded-2xl bg-white/70 p-3"><div class="font-semibold">Tip</div><div>Come back and complete daily tasks to see the flowers bloom 🌸</div></div>
         </div>
@@ -186,7 +227,7 @@
           <div class="text-xl font-bold mb-2">Don't Overwork Yourself 💗</div>
           <div class="mb-3">Give Yourself <b>15 Minutes</b> Rest, Honey.</div>
           <div class="flex items-center justify-center">
-            <img src="/Asset/cat-meme.png" alt="cat-meme" class="h-32 object-contain rounded-xl shadow" />
+            <img src="Asset/cat-meme.png" alt="cat-meme" class="h-32 object-contain rounded-xl shadow" />
           </div>
         </div>
       </div>
@@ -206,6 +247,13 @@
 
 <script>
 // ===== Utilities =====
+function toLocalISO(date) {
+  const d = new Date(date);
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 const $ = (s)=>document.querySelector(s); const $$=(s)=>Array.from(document.querySelectorAll(s));
 const tabs=['tasks','garden','timer','quotes'];
 function showTab(name){
@@ -217,9 +265,40 @@ function showTab(name){
 }
 $$('.navBtn').forEach(btn=> btn.addEventListener('click',()=> showTab(btn.dataset.tab)));
 
+// ========== Mobile hamburger sheet ==========
+const menuBtn     = $('#menuBtn');
+const mobileSheet = $('#mobileSheet');
+const sheetPanel  = $('#sheetPanel');
+const sheetOverlay= $('#sheetOverlay');
+const sheetClose  = $('#sheetClose');
+
+function openSheet(){
+  // hiện lớp phủ
+  mobileSheet.classList.remove('hidden');
+  // chờ 1 frame để CSS transition hoạt động
+  requestAnimationFrame(()=> sheetPanel.classList.remove('translate-x-full'));
+}
+function closeSheet(){
+  // đẩy panel ra ngoài trước
+  sheetPanel.classList.add('translate-x-full');
+  // khi transition xong mới ẩn hẳn overlay
+  sheetPanel.addEventListener('transitionend', ()=> {
+    mobileSheet.classList.add('hidden');
+  }, { once:true });
+}
+
+menuBtn?.addEventListener('click', openSheet);
+sheetOverlay?.addEventListener('click', closeSheet);
+sheetClose?.addEventListener('click', closeSheet);
+// bấm vào các item trong sheet thì chuyển tab + đóng sheet
+$$('.mobileTabBtn').forEach(b => b.addEventListener('click', () => {
+  showTab(b.dataset.tab);
+  closeSheet();
+}));
+
 // ===== Core state for Tasks =====
 const STORAGE_KEY='weird-productivity-nobuild-v3';
-const todayISO=()=> new Date().toISOString().slice(0,10);
+const todayISO=()=> toLocalISO(new Date());
 function startOfMonth(d){d=new Date(d);return new Date(d.getFullYear(),d.getMonth(),1)}
 function endOfMonth(d){d=new Date(d);return new Date(d.getFullYear(),d.getMonth()+1,0)}
 function addDays(date,days){const d=new Date(date);d.setDate(d.getDate()+days);return d}
@@ -228,9 +307,23 @@ function fmtDayLong(d){return new Intl.DateTimeFormat(undefined,{weekday:'long',
 function id(){return Math.random().toString(36).slice(2,9)}
 function prioLabel(p){return p==3?'spicy':p==2?'normal':'chill'}
 let state=loadState(); let selectedDate=todayISO(); let bar,pie;
-function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return{tasks:demoTasks()};const s=JSON.parse(raw);if(!Array.isArray(s.tasks))return{tasks:demoTasks()};return s}catch(e){return{tasks:demoTasks()}}}
-function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
-function demoTasks(){const t=new Date();t.setHours(0,0,0,0);const iso=(d)=>{d.setHours(0,0,0,0);return d.toISOString().slice(0,10)};const y1=new Date(t);y1.setDate(t.getDate()-1);const y2=new Date(t);y2.setDate(t.getDate()-2);return[
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  }catch(e){}
+  return { tasks: demoTasks() };
+}
+async function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){}
+  const uid = window.__MUSE_UID__;
+  if (!uid) return; // chưa đăng nhập ẩn danh xong thì thôi, lần sau sẽ sync
+  window.dispatchEvent(new CustomEvent("muse:requestSave", { detail: state }));
+}
+function demoTasks(){const t=new Date();t.setHours(0,0,0,0);const iso=(d)=>{ d.setHours(0,0,0,0); return toLocalISO(d); };const y1=new Date(t);y1.setDate(t.getDate()-1);const y2=new Date(t);y2.setDate(t.getDate()-2);return[
+  
 {id:id(),title:'Morning stretch & water',date:iso(y2),done:true,priority:1},
 {id:id(),title:'Write 3 lines of journal',date:iso(y2),done:true,priority:2},
 {id:id(),title:'Read 10 pages',date:iso(y1),done:true,priority:2},
@@ -240,8 +333,8 @@ function demoTasks(){const t=new Date();t.setHours(0,0,0,0);const iso=(d)=>{d.se
 {id:id(),title:'Walk 15 minutes',date:iso(t),done:false,priority:1},]}
 function tasksFor(date){return state.tasks.filter(t=>t.date===date)}
 function groupByDate(tasks){const m=new Map();tasks.forEach(t=>{if(!m.has(t.date))m.set(t.date,[]);m.get(t.date).push(t)});return m}
-function computeMonthStats(monthDate){const start=startOfMonth(monthDate),end=endOfMonth(monthDate);const arr=state.tasks.filter(t=>new Date(t.date)>=start&&new Date(t.date)<=end);const map=groupByDate(arr);let total=0,done=0;const daily=[];for(let d=new Date(start);d<=end;d=addDays(d,1)){const iso=d.toISOString().slice(0,10);const list=map.get(iso)||[];const dt=list.length;const dd=list.filter(x=>x.done).length;total+=dt;done+=dd;daily.push({iso,total:dt,done:dd})}const completion=total?Math.round(done/total*100):0;return{total,done,completion,daily}}
-function computeStreak(){const map=groupByDate(state.tasks);let streak=0;let d=new Date();d.setHours(0,0,0,0);while(true){const iso=d.toISOString().slice(0,10);const list=map.get(iso)||[];if(list.some(t=>t.done)){streak++;d=addDays(d,-1)}else break}return streak}
+function computeMonthStats(monthDate){const start=startOfMonth(monthDate),end=endOfMonth(monthDate);const arr=state.tasks.filter(t=>new Date(t.date)>=start&&new Date(t.date)<=end);const map=groupByDate(arr);let total=0,done=0;const daily=[];for(let d=new Date(start);d<=end;d=addDays(d,1)){const iso=toLocalISO(d);const list=map.get(iso)||[];const dt=list.length;const dd=list.filter(x=>x.done).length;total+=dt;done+=dd;daily.push({iso,total:dt,done:dd})}const completion=total?Math.round(done/total*100):0;return{total,done,completion,daily}}
+function computeStreak(){const map=groupByDate(state.tasks);let streak=0;let d=new Date();d.setHours(0,0,0,0);while(true){const iso=toLocalISO(d);const list=map.get(iso)||[];if(list.some(t=>t.done)){streak++;d=addDays(d,-1)}else break}return streak}
 function render(){
   $('#monthLabel').textContent=fmtMonth(selectedDate); $('#statsMonth').textContent=fmtMonth(selectedDate); $('#dayLabel').textContent=fmtDayLong(selectedDate);
   const start=startOfMonth(selectedDate), end=endOfMonth(selectedDate); const first=start.getDay(); const wrap=$('#calendarGrid'); wrap.innerHTML=''; for(let i=0;i<first;i++){const s=document.createElement('div'); s.className='opacity-50'; wrap.appendChild(s)}
@@ -253,8 +346,26 @@ function render(){
   $('#mm60').className=(pct>=60?'line-through opacity-60':''); $('#mm100').className=(pct===100?'line-through opacity-60':''); $('#mm50m').className=(stats.completion>=50?'line-through opacity-60':'');
   if (!$('#tab-garden').classList.contains('hidden')) updateGarden();
 }
-$('#prevMonth').addEventListener('click',()=>{const d=new Date(selectedDate); d.setMonth(d.getMonth()-1); selectedDate=new Date(d.getFullYear(),d.getMonth(),Math.min(new Date(selectedDate).getDate(),endOfMonth(d).getDate())).toISOString().slice(0,10); render()});
-$('#nextMonth').addEventListener('click',()=>{const d=new Date(selectedDate); d.setMonth(d.getMonth()+1); selectedDate=new Date(d.getFullYear(),d.getMonth(),Math.min(new Date(selectedDate).getDate(),endOfMonth(d).getDate())).toISOString().slice(0,10); render()});
+$('#prevMonth').addEventListener('click',()=>{
+  const d=new Date(selectedDate);
+  d.setMonth(d.getMonth()-1);
+  selectedDate=toLocalISO(
+    new Date(d.getFullYear(), d.getMonth(),
+      Math.min(new Date(selectedDate).getDate(), endOfMonth(d).getDate())
+    )
+  );   // ✅ local ISO
+  render();
+});
+$('#nextMonth').addEventListener('click',()=>{
+  const d=new Date(selectedDate);
+  d.setMonth(d.getMonth()+1);
+  selectedDate=toLocalISO(
+    new Date(d.getFullYear(), d.getMonth(),
+      Math.min(new Date(selectedDate).getDate(), endOfMonth(d).getDate())
+    )
+  );   // ✅
+  render();
+});
 $('#todayBtn').addEventListener('click',()=>{selectedDate=todayISO(); render()});
 $('#addBtn').addEventListener('click', addTask);
 $('#newTitle').addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.preventDefault();addTask()}});
@@ -280,11 +391,105 @@ function resetTimer(){ pauseTimer(); readInputsToRemaining(); $('#restBanner')?.
 $('#tMin')?.addEventListener('change',readInputsToRemaining); $('#tSec')?.addEventListener('change',readInputsToRemaining); $('#tStart')?.addEventListener('click',startTimer); $('#tPause')?.addEventListener('click',pauseTimer); $('#tReset')?.addEventListener('click',resetTimer); $$('#tab-timer [data-preset]').forEach(b=> b.addEventListener('click',()=>{ pauseTimer(); const minutes=parseInt(b.dataset.preset,10)||0; tRemaining=minutes*60; syncInputsFromRemaining(); $('#restBanner')?.classList.add('hidden'); })); syncInputsFromRemaining();
 
 // ===== Quotes =====
-const QUOTES=['Weird is wonderful 🌸','Tiny tasks, tiny wins.','Bloom where you are planted 🌱','Your future self is applauding 👏','Its better to cry in a Lamborghini than cry in a Honda Civic', 'Whoever said money cant solve your problems? Must not have had enough money to solve them','Work smarter not harder, babe','Rich people not gonna marry dumb sh*t','If you’re lazy, someone dumber is taking your spot.','Cry now, flex later.','Excuses don’t pay bills.','You said tomorrow yesterday.','Complain less, conquer more.','Stay broke, or stay focused.','Grades don’t define you, but they decide if you eat instant noodles or steak.','Sleep is for the rich-grind is for the broke.','It’s better to be exhausted in a penthouse than relaxed in debt.','Ambition looks sexy, laziness doesn’t.','You studied 5 hours? Neighbor’s kid studied 10.','Rest when you’re rich, not when you’re tired.','Do you really want to be the failure in an Asian family?'];
+const QUOTES=['Weird is wonderful 🌸','Tiny tasks, tiny wins.','Bloom where you are planted 🌱','Your future self is applauding 👏','Its better to cry in a Lamborghini than cry in a Honda Civic', 'Whoever said money cant solve your problems? Must not have had enough money to solve them','Work smarter not harder, babe','Rich people not gonna marry dumb sh*t','If you’re lazy, someone dumber is taking your spot.','Cry now, flex later.','Excuses don’t pay bills.','You said tomorrow yesterday.','Complain less, conquer more.','Stay broke, or stay focused.','Grades don’t define you, but they decide if you eat instant noodles or steak.','Sleep is for the rich-grind is for the broke.','It’s better to be exhausted in a penthouse than relaxed in debt.','Ambition looks sexy, laziness doesn’t.','You studied 5 hours? Neighbor’s kid studied 10.','Rest when you’re rich, not when you’re tired.','Do you really want to be the failure in an Asian family?','Youre worth it! Always was, and alwaysa wil be'];
 $('#newQuoteBtn')?.addEventListener('click',()=>{$('#quoteBox').textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)]});
 
 // ===== Init =====
 showTab('tasks');
+</script>
+
+<script type="module">
+  // ---- Firebase SDKs ----
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDYguh3q6kSKHMQIlx1_M6Kc2N28N7Sio",
+    authDomain: "musedo-b6a21.firebaseapp.com",
+    projectId: "musedo-b6a21",
+    storageBucket: "musedo-b6a21.appspot.com",
+    messagingSenderId: "840299933623",
+    appId: "1:840299933623:web:c01ac0b487d37358d08232",
+    measurementId: "G-1K2X7XQ9DQ"
+  };
+
+  // ---- Init ----
+  const app  = initializeApp(firebaseConfig);
+  const db   = getFirestore(app);
+  const auth = getAuth(app);
+
+  // ---- Map UI elements (đúng id trên HTML) ----
+  const statusEl   = document.getElementById('authStatus');
+  const btnGoogle  = document.getElementById('btnGoogle');
+  const btnSignOut = document.getElementById('btnSignOut');
+
+  // Cho code phần Tasks biết uid hiện tại
+  window.__MUSE_UID__ = null;
+
+  // ---- SSO Google ----
+  btnGoogle?.addEventListener('click', async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      alert('Google sign-in failed: ' + (e?.message || e));
+      console.error(e);
+    }
+  });
+
+  // ---- Sign out ----
+  btnSignOut?.addEventListener('click', async () => {
+    await signOut(auth);
+  });
+
+  // ---- Khi trạng thái đăng nhập thay đổi ----
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // Đang đăng nhập
+      window.__MUSE_UID__ = user.uid;
+      statusEl.textContent = `Signed in (${user.displayName || 'Google'})`;
+      btnGoogle.classList.add('hidden');
+      btnSignOut.classList.remove('hidden');
+
+      // Đồng bộ Firestore <-> local/state
+      const ref = doc(db, 'users', user.uid);
+
+      // Lắng nghe realtime
+      onSnapshot(ref, (snap) => {
+        const cloud = snap.data();
+        if (!cloud) return;
+        try { localStorage.setItem('weird-productivity-nobuild-v3', JSON.stringify(cloud)); } catch {}
+        if (window.state && cloud.tasks) {
+          window.state = cloud;
+          if (window.render) window.render();
+        }
+      });
+
+      // Nếu lần đầu chưa có doc -> đẩy state hiện tại lên
+      const first = await getDoc(ref);
+      if (!first.exists() && window.state) {
+        await setDoc(ref, window.state, { merge: true });
+      }
+    } else {
+      // Đã sign out
+      window.__MUSE_UID__ = null;
+      statusEl.textContent = 'Not signed in';
+      btnGoogle.classList.remove('hidden');
+      btnSignOut.classList.add('hidden');
+    }
+  });
+
+  // ---- Nghe sự kiện save từ code Tasks và ghi Firestore ----
+  window.addEventListener('muse:requestSave', async (e) => {
+    const uid = window.__MUSE_UID__;
+    if (!uid) return; // chưa đăng nhập thì bỏ qua
+    const ref = doc(db, 'users', uid);
+    await setDoc(ref, e.detail, { merge: true });
+  });
 </script>
 </body>
 </html>
