@@ -86,6 +86,13 @@
       <div class="font-bold">Menu</div>
       <button id="sheetClose" class="h-8 w-8 rounded-full hover:bg-white/70" aria-label="Close">✕</button>
     </div>
+    <!-- Subtitle pill chỉ hiện trên mobile -->
+    <div class="px-4 py-3 md:hidden">
+      <span
+        class="inline-flex items-center rounded-full bg-rose-200/60
+        px-3 py-1 text-xs font-semibold text-rose-800 border border-white/50">Tin Work Measurement
+      </span>
+    </div>
     <div class="p-3 flex flex-col gap-2">
       <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="tasks">Tasks</button>
       <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="garden">Garden</button>
@@ -118,8 +125,7 @@
         </span>
         <!-- subtitle pill -->
         <span
-           class="inline-flex items-center rounded-full bg-rose-200/60
-           px-3 py-1 text-xs font-semibold text-rose-800 border border-white/50">Tin Work Measurement
+           class="hidden md:inline-flex inline-flex items-center rounded-full bg-rose-200/60 px-3 py-1 text-xs font-semibold text-rose-800 border border-white/50">Tin Work Measurement
         </span>
       </h1>
       <!-- RIGHT: Today button -->
