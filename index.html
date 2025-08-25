@@ -340,10 +340,12 @@ function loadState(){
 }
 async function saveState(){
   try{
+    // gắn mốc thời gian local để so sánh với Cloud
+    state.updatedAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }catch(e){}
   const uid = window.__MUSE_UID__;
-  if (!uid) return; // chưa đăng nhập ẩn danh xong thì thôi, lần sau sẽ sync
+  if (!uid) return; // chưa đăng nhập thì tạm lưu local, đăng nhập xong sẽ sync
   window.dispatchEvent(new CustomEvent("muse:requestSave", { detail: state }));
 }
 function demoTasks(){const t=new Date();t.setHours(0,0,0,0);const iso=(d)=>{ d.setHours(0,0,0,0); return toLocalISO(d); };const y1=new Date(t);y1.setDate(t.getDate()-1);const y2=new Date(t);y2.setDate(t.getDate()-2);return[
@@ -426,11 +428,12 @@ showTab('tasks');
   // ---- Firebase SDKs ----
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
   import {
-    getFirestore, doc, getDoc, setDoc, onSnapshot
+    getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
   import {
     getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
   } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyCDYguh3q6kSKHMQIlx1_M6Kc2N28N7Sio",
     authDomain: "musedo-b6a21.firebaseapp.com",
@@ -446,71 +449,90 @@ showTab('tasks');
   const db   = getFirestore(app);
   const auth = getAuth(app);
   window.__MUSE_UID__ = null;
-  
+
   // ---- Map UI elements cho desktop + mobile ----
-const statusEls     = [document.getElementById('authStatus'),  document.getElementById('authStatusM')].filter(Boolean);
-const btnGoogleEls  = [document.getElementById('btnGoogle'),   document.getElementById('btnGoogleM')].filter(Boolean);
-const btnSignOutEls = [document.getElementById('btnSignOut'),  document.getElementById('btnSignOutM')].filter(Boolean);
+  const statusEls     = [document.getElementById('authStatus'),  document.getElementById('authStatusM')].filter(Boolean);
+  const btnGoogleEls  = [document.getElementById('btnGoogle'),   document.getElementById('btnGoogleM')].filter(Boolean);
+  const btnSignOutEls = [document.getElementById('btnSignOut'),  document.getElementById('btnSignOutM')].filter(Boolean);
 
-function applyAuthUI({ signedIn, name }) {
-  statusEls.forEach(el => el && (el.textContent = signedIn ? `Signed in (${name})` : 'Not signed in'));
-  btnGoogleEls.forEach(el => el && el.classList.toggle('hidden', signedIn));
-  btnSignOutEls.forEach(el => el && el.classList.toggle('hidden', !signedIn));
-}
-
-// Click: Google sign-in (cả 2 nơi)
-btnGoogleEls.forEach(btn => btn.addEventListener('click', async () => {
-  try {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  } catch (e) {
-    alert('Google sign-in failed: ' + (e?.message || e));
-    console.error(e);
+  function applyAuthUI({ signedIn, name }) {
+    statusEls.forEach(el => el && (el.textContent = signedIn ? `Signed in (${name})` : 'Not signed in'));
+    btnGoogleEls.forEach(el => el && el.classList.toggle('hidden', signedIn));
+    btnSignOutEls.forEach(el => el && el.classList.toggle('hidden', !signedIn));
   }
-}));
 
-// Click: Sign out (cả 2 nơi)
-btnSignOutEls.forEach(btn => btn.addEventListener('click', () => signOut(auth)));
+  // Click: Google sign-in (cả 2 nơi)
+  btnGoogleEls.forEach(btn => btn.addEventListener('click', async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      alert('Google sign-in failed: ' + (e?.message || e));
+      console.error(e);
+    }
+  }));
 
-// ---- Khi trạng thái đăng nhập thay đổi ----
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
+  // Click: Sign out (cả 2 nơi)
+  btnSignOutEls.forEach(btn => btn.addEventListener('click', () => signOut(auth)));
+
+  // ---- Lắng nghe sự kiện save từ code Tasks và ghi Firestore ----
+  window.addEventListener('muse:requestSave', async (e) => {
+    const uid = window.__MUSE_UID__;
+    if (!uid) return; // chưa đăng nhập thì bỏ qua (đã lưu local trong saveState)
+    try {
+      const ref = doc(db, 'users', uid);
+      const payload = { ...e.detail, updatedAt: serverTimestamp() };
+      await setDoc(ref, payload, { merge: true });
+    } catch (err) {
+      console.error('setDoc failed', err);
+      alert('Không lưu được lên Cloud: ' + (err?.message || err));
+    }
+  });
+
+  // ---- Khi trạng thái đăng nhập thay đổi ----
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.__MUSE_UID__ = null;
+      applyAuthUI({ signedIn: false });
+      return;
+    }
+
     // Đang đăng nhập
     window.__MUSE_UID__ = user.uid;
     applyAuthUI({ signedIn: true, name: user.displayName || 'Google' });
 
-    // Đồng bộ Firestore <-> local/state (giữ nguyên logic của bạn)
     const ref = doc(db, 'users', user.uid);
 
-    // Lắng nghe realtime
-    onSnapshot(ref, (snap) => {
-      const cloud = snap.data();
-      if (!cloud) return;
+    // Lấy cloud + local để hòa giải
+    const snap = await getDoc(ref);
+    const cloud = snap.exists() ? snap.data() : null;
+    const localRaw = localStorage.getItem('weird-productivity-nobuild-v3');
+    const local = localRaw ? JSON.parse(localRaw) : null;
+
+    const cloudTime = cloud?.updatedAt?.toMillis?.() ?? 0; // Firestore Timestamp -> ms
+    const localTime = local?.updatedAt ?? 0;               // ms do ta set ở saveState()
+
+    if (!cloud && local) {
+      // Cloud chưa có -> đẩy local lên
+      await setDoc(ref, { ...local, updatedAt: serverTimestamp() }, { merge: true });
+    } else if (cloud && (!local || cloudTime >= localTime)) {
+      // Cloud mới hơn -> kéo cloud về local + UI
       try { localStorage.setItem('weird-productivity-nobuild-v3', JSON.stringify(cloud)); } catch {}
-      if (window.state && cloud.tasks) {
-        window.state = cloud;
-        if (window.render) window.render();
-      }
-    });
-
-    // Nếu lần đầu chưa có doc -> đẩy state hiện tại lên
-    const first = await getDoc(ref);
-    if (!first.exists() && window.state) {
-      await setDoc(ref, window.state, { merge: true });
+      if (window.state && cloud.tasks) { window.state = cloud; window.render?.(); }
+    } else if (local && localTime > cloudTime) {
+      // Local mới hơn -> đẩy lên cloud
+      await setDoc(ref, { ...local, updatedAt: serverTimestamp() }, { merge: true });
     }
-  } else {
-    // Đã sign out
-    window.__MUSE_UID__ = null;
-    applyAuthUI({ signedIn: false });
-  }
-});
 
-  // ---- Nghe sự kiện save từ code Tasks và ghi Firestore ----
-  window.addEventListener('muse:requestSave', async (e) => {
-    const uid = window.__MUSE_UID__;
-    if (!uid) return; // chưa đăng nhập thì bỏ qua
-    const ref = doc(db, 'users', uid);
-    await setDoc(ref, e.detail, { merge: true });
+    // Nghe realtime để đồng bộ chéo thiết bị
+    onSnapshot(ref, (s) => {
+      const data = s.data();
+      if (!data) return;
+      try { localStorage.setItem('weird-productivity-nobuild-v3', JSON.stringify(data)); } catch {}
+      if (window.state && data.tasks) { window.state = data; window.render?.(); }
+    }, (err) => {
+      console.error('onSnapshot error', err);
+    });
   });
 </script>
 </body>
