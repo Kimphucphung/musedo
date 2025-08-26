@@ -70,6 +70,11 @@
       <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
                      data-[active=true]:bg-rose-400 data-[active=true]:text-white"
               data-tab="quotes">Quotes</button>
+      <!-- Donate -->
+      <a href="https://www.buymeacoffee.com/your_id" target="_blank" rel="noopener"
+         class="px-3 py-1 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold">
+        ❤️ Donate
+      </a>
       <!-- Auth (desktop) -->
       <div id="authBox" class="text-sm flex items-center gap-2">
         <span id="authStatus" class="opacity-70">Not signed in</span>
@@ -116,6 +121,7 @@
           <button id="btnGoogleM" class="px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign in with Google</button>
           <button id="btnSignOutM" class="hidden px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign out</button>
         </div>
+        <a href="https://www.buymeacoffee.com/your_id" target="_blank" class="mt-2 inline-block px-3 py-2 rounded-full bg-rose-100 text-rose-900 font-semibold">❤️ Donate</a>
     </div>
   </div>
 </div>
@@ -139,11 +145,19 @@
         </span>
       </h1>
       <!-- RIGHT: Today button -->
-      <button id="todayBtn"
-        class="rounded-full px-3 py-2 backdrop-blur-xl bg-white/50
-               border border-white/40 shadow-glass hover:bg-white/60 transition">
-        Today
-      </button>
+      <div class="flex items-center gap-2">
+        <button id="todayBtn"
+          class="rounded-full px-3 py-2 backdrop-blur-xl bg-white/50
+                 border border-white/40 shadow-glass hover:bg-white/60 transition">
+          Today
+        </button>
+
+        <button id="reportBtn"
+          class="rounded-full px-3 py-2 backdrop-blur-xl bg-white/60
+                 border border-white/40 shadow-glass hover:bg-white/80 transition">
+          Report
+        </button>
+      </div>
     </div>
   </header>
 
@@ -265,6 +279,53 @@
         <button id="newQuoteBtn" class="mt-4 px-4 py-2 rounded-full bg-rose-400 text-white">New Quote</button>
       </div>
     </section>
+
+      <!-- Weekly/Monthly Report Modal -->
+  <div id="reportModal" class="fixed inset-0 z-[60] hidden">
+    <!-- overlay -->
+    <div id="reportOverlay" class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+    <!-- panel -->
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                w-[92vw] max-w-3xl rounded-3xl bg-white/90 backdrop-blur-xl
+                border border-white/60 shadow-2xl p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl font-bold">Weekly & Monthly Report</h3>
+        <div class="flex items-center gap-2">
+          <button id="exportCSVBtn"
+            class="px-3 py-1 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold">
+            Export CSV
+          </button>
+          <button id="reportClose" class="h-8 w-8 rounded-full hover:bg-white/70">✕</button>
+         </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- WEEK -->
+        <div class="rounded-2xl bg-white/70 p-4 ring-1 ring-white/60">
+          <div class="text-sm text-rose-700/70 mb-1" id="weekLabel">This week</div>
+          <div class="text-3xl font-black mb-2"><span id="weekPct">0</span>%</div>
+          <div class="text-xs mb-2">
+            <b><span id="weekDone">0</span>/<span id="weekTotal">0</span></b> tasks completed
+          </div>
+          <canvas id="weekChart" height="140"></canvas>
+        </div>
+
+        <!-- MONTH -->
+        <div class="rounded-2xl bg-white/70 p-4 ring-1 ring-white/60">
+          <div class="text-sm text-rose-700/70 mb-1" id="monthLabelRpt">This month</div>
+          <div class="text-3xl font-black mb-2"><span id="monthPctRpt">0</span>%</div>
+          <div class="text-xs mb-2">
+            <b><span id="monthDoneRpt">0</span>/<span id="monthTotalRpt">0</span></b> tasks completed
+          </div>
+          <canvas id="monthChartRpt" height="140"></canvas>
+        </div>
+      </div>
+
+      <div class="mt-4 text-xs text-rose-700/70">
+        *Report dựa trên dữ liệu task hiện có trong local/cloud.
+      </div>
+    </div>
+  </div>
   </main>
 
   <footer class="mx-auto max-w-6xl px-6 pb-10 text-center text-xs text-rose-700/70">Pro‑tip: tiny tasks, tiny wins. Weirdly satisfying.</footer>
@@ -422,6 +483,179 @@ $('#newQuoteBtn')?.addEventListener('click',()=>{$('#quoteBox').textContent=QUOT
 
 // ===== Init =====
 showTab('tasks');
+
+// ===== Report helpers =====
+function startOfWeek(d = new Date()) {
+  const t = new Date(d); t.setHours(0,0,0,0);
+  const day = t.getDay(); // 0=Sun
+  t.setDate(t.getDate() - day); // về Chủ nhật tuần đó
+  return t;
+}
+function computeRangeStatsInclusive(start, end) {
+  const s = new Date(start), e = new Date(end);
+  s.setHours(0,0,0,0); e.setHours(0,0,0,0);
+  const arr = state.tasks.filter(t => {
+    const dt = new Date(t.date); dt.setHours(0,0,0,0);
+    return dt >= s && dt <= e;
+  });
+  const map = groupByDate(arr);
+  let total=0, done=0; const daily=[];
+  for (let d=new Date(s); d<=e; d=addDays(d,1)) {
+    const iso = toLocalISO(d);
+    const list = map.get(iso) || [];
+    const dt = list.length;
+    const dd = list.filter(x=>x.done).length;
+    total += dt; done += dd;
+    daily.push({ iso, total: dt, done: dd });
+  }
+  const completion = total ? Math.round(done/total*100) : 0;
+  return { total, done, completion, daily };
+}
+
+// open/close modal
+let weekChartInst, monthChartInst;
+function openReportModal() {
+  // WEEK: từ Chủ nhật -> hôm nay
+  const wStart = startOfWeek(new Date());
+  const wEnd   = new Date(); wEnd.setHours(0,0,0,0);
+  const wStats = computeRangeStatsInclusive(wStart, wEnd);
+
+  // MONTH: dùng computeMonthStats đã có
+  const mStats = computeMonthStats(new Date());
+
+  // Fill labels + numbers
+  $('#weekPct').textContent      = wStats.completion;
+  $('#weekDone').textContent     = wStats.done;
+  $('#weekTotal').textContent    = wStats.total;
+  $('#weekLabel').textContent    = `This week (${toLocalISO(wStart)} → ${toLocalISO(wEnd)})`;
+
+  $('#monthPctRpt').textContent   = mStats.completion;
+  $('#monthDoneRpt').textContent  = mStats.done;
+  $('#monthTotalRpt').textContent = mStats.total;
+  $('#monthLabelRpt').textContent = `This month (${fmtMonth(new Date())})`;
+
+  // Charts
+  const wLabels = wStats.daily.map(d => new Date(d.iso).toLocaleDateString(undefined,{weekday:'short'}));
+  const wDone   = wStats.daily.map(d => d.done);
+  const wTotal  = wStats.daily.map(d => d.total);
+
+  const mLabels = mStats.daily.map(d => new Date(d.iso).getDate());
+  const mDone   = mStats.daily.map(d => d.done);
+  const mTotal  = mStats.daily.map(d => d.total);
+
+  if (weekChartInst) weekChartInst.destroy();
+  if (monthChartInst) monthChartInst.destroy();
+
+  weekChartInst = new Chart($('#weekChart').getContext('2d'), {
+    type: 'bar',
+    data: { labels: wLabels, datasets: [{ label:'Total', data:wTotal }, { label:'Completed', data:wDone }] },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  monthChartInst = new Chart($('#monthChartRpt').getContext('2d'), {
+    type: 'bar',
+    data: { labels: mLabels, datasets: [{ label:'Total', data:mTotal }, { label:'Completed', data:mDone }] },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  // show
+  $('#reportModal').classList.remove('hidden');
+}
+function closeReportModal() {
+  $('#reportModal').classList.add('hidden');
+}
+
+// ===== Export CSV (Weekly + Monthly) =====
+function csvEsc(s){
+  if (s == null) return '""';
+  s = String(s).replace(/"/g,'""').replace(/\r?\n/g, ' ');
+  return `"${s}"`;
+}
+function isBetweenISO(iso, startDate, endDate){
+  const d = new Date(iso); d.setHours(0,0,0,0);
+  const s = new Date(startDate); s.setHours(0,0,0,0);
+  const e = new Date(endDate);   e.setHours(0,0,0,0);
+  return d >= s && d <= e;
+}
+function exportCSVFromReport(){
+  // Ranges
+  const wStart = startOfWeek(new Date());
+  const wEnd   = new Date(); wEnd.setHours(0,0,0,0);
+  const mStart = startOfMonth(new Date());
+  const mEnd   = endOfMonth(new Date());
+
+  // Stats
+  const wStats = computeRangeStatsInclusive(wStart, wEnd);
+  const mStats = computeRangeStatsInclusive(mStart, mEnd);
+
+  const lines = [];
+
+  // Weekly summary
+  lines.push('Weekly Summary');
+  lines.push('Date,Total,Done,Completion%');
+  wStats.daily.forEach(d=>{
+    const pct = d.total ? Math.round(d.done/d.total*100) : 0;
+    lines.push(`${d.iso},${d.total},${d.done},${pct}`);
+  });
+  lines.push('');
+
+  // Monthly summary
+  lines.push('Monthly Summary');
+  lines.push('Date,Total,Done,Completion%');
+  mStats.daily.forEach(d=>{
+    const pct = d.total ? Math.round(d.done/d.total*100) : 0;
+    lines.push(`${d.iso},${d.total},${d.done},${pct}`);
+  });
+  lines.push('');
+
+  // Weekly tasks (raw)
+  const weeklyTasks = state.tasks.filter(t => isBetweenISO(t.date, wStart, wEnd));
+  lines.push('Weekly Tasks');
+  lines.push('Date,Title,Done,Priority,Notes');
+  weeklyTasks.forEach(t=>{
+    lines.push([
+      t.date,
+      csvEsc(t.title),
+      t.done ? 1 : 0,
+      t.priority ?? '',
+      csvEsc(t.notes || '')
+    ].join(','));
+  });
+  lines.push('');
+
+  // Monthly tasks (raw)
+  const monthlyTasks = state.tasks.filter(t => isBetweenISO(t.date, mStart, mEnd));
+  lines.push('Monthly Tasks');
+  lines.push('Date,Title,Done,Priority,Notes');
+  monthlyTasks.forEach(t=>{
+    lines.push([
+      t.date,
+      csvEsc(t.title),
+      t.done ? 1 : 0,
+      t.priority ?? '',
+      csvEsc(t.notes || '')
+    ].join(','));
+  });
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `muse-report-${toLocalISO(new Date())}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+
+// Bind export btn
+$('#exportCSVBtn')?.addEventListener('click', exportCSVFromReport);
+
+// bind buttons
+$('#reportBtn')?.addEventListener('click', openReportModal);
+$('#reportOverlay')?.addEventListener('click', closeReportModal);
+$('#reportClose')?.addEventListener('click', closeReportModal);
+
 </script>
 
 <script type="module">
