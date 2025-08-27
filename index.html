@@ -4,6 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Muse.do | Productivity Work Measurement Tool</title>
+  
+  <!-- SEO Meta Tags -->
+<meta name="description" content="Muse.do - A dreamy productivity & work measurement tool. Track tasks, focus with timers, and grow your achievement garden.">
+<meta name="keywords" content="muse.do, productivity, task manager, pomodoro timer, habit tracker, achievement garden, focus tool, work measurement">
+<meta name="author" content="Muse.do Team, Tin Artsy">
+
+<!-- Open Graph (Facebook, LinkedIn) -->
+<meta property="og:title" content="Muse.do | Productivity Work Measurement Tool">
+<meta property="og:description" content="Track tasks, measure productivity, focus with timers, and watch your progress bloom in the garden 🌸.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kimphucphung.github.io/musedo/">
+<meta property="og:image" content="https://kimphucphung.github.io/musedo/Asset/Home%20Page.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Muse.do | Productivity Work Measurement Tool">
+<meta name="twitter:description" content="Tiny tasks, tiny wins. Organize your day and grow your productivity garden.">
+<meta name="twitter:image" content="https://kimphucphung.github.io/musedo/Asset/Home%20Page.png">
+
   <!-- Tailwind via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -42,8 +61,11 @@
   <div class="relative mx-auto max-w-6xl px-4 sm:px-6 py-3 md:py-4 min-h-[56px] md:min-h-[64px] flex items-center md:justify-between">
     <!-- BRAND: mobile ở giữa (absolute), desktop bên trái (static) -->
     <div class="absolute left-1/2 -translate-x-1/2 md:static md:left-auto md:translate-x-0">
-      <div class="text-2xl md:text-3xl font-black tracking-tight select-none text-center md:text-left">muse.do
-      </div>
+      <a href="#" 
+        onclick="showTab('tasks'); return false;" 
+        class="text-2xl md:text-3xl font-black tracking-tight select-none text-center md:text-left">
+        muse.do
+      </a>
     </div>
     <!-- HAMBURGER: chỉ mobile, đặt absolute bên phải -->
     <button id="menuBtn"
