@@ -1,0 +1,14 @@
+{
+  "name": "Muse.do — Productivity Work Measurement",
+  "short_name": "Muse.do",
+  "description": "Track tasks, focus with a timer, and grow your achievement garden.",
+  "start_url": "/musedo/",
+  "scope": "/musedo/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f43f5e",
+  "icons": [
+    { "src": "Asset/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "Asset/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

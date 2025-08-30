@@ -4,7 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Muse Do Work | Productivity Work Measurement Tool</title>
-  
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#f43f5e">
   <link rel="canonical" href="https://kimphucphung.github.io/musedo/" />
 <meta name="robots" content="index, follow" />
 <meta name="google-site-verification" content="ma9GkYZj1BeMU-Wbcw4Gpi2vh4ii4trJWSZnwu7USTo" />
@@ -794,6 +795,13 @@ $('#reportClose')?.addEventListener('click', closeReportModal);
       console.error('onSnapshot error', err);
     });
   });
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(console.error);
+    });
+  }
 </script>
 </body>
 </html>
