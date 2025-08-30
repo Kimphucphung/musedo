@@ -97,6 +97,9 @@
                      data-[active=true]:bg-rose-400 data-[active=true]:text-white"
               data-tab="quotes">Quotes</button>
       <!-- Donate -->
+      <button id="btnInstall" class="hidden px-3 py-1 rounded-full bg-rose-100 hover:bg-rose-200 font-semibold">
+      ⬇️ Install
+      </button>
       <a href="https://buymeacoffee.com/tinmadedesign" target="_blank" rel="noopener"
          class="px-3 py-1 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold">
         ❤️ Donate
@@ -147,6 +150,9 @@
           <button id="btnGoogleM" class="px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign in with Google</button>
           <button id="btnSignOutM" class="hidden px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign out</button>
         </div>
+        <button id="btnInstallM" class="hidden mt-2 px-3 py-2 rounded-full bg-rose-100 font-semibold">
+        ⬇️ Install
+        </button>
         <a href="https://buymeacoffee.com/tinmadedesign" target="_blank" class="mt-2 inline-block px-3 py-2 rounded-full bg-rose-100 text-rose-900 font-semibold">❤️ Donate</a>
     </div>
   </div>
@@ -799,9 +805,44 @@ $('#reportClose')?.addEventListener('click', closeReportModal);
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(console.error);
+      navigator.serviceWorker.register('/musedo/sw.js')
+        .then(reg => console.log('✅ Service worker registered:', reg.scope))
+        .catch(err => console.error('❌ SW registration failed:', err));
     });
   }
+</script>
+<script>
+  // Hiện nút cài khi đủ điều kiện PWA
+  let deferredPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('btnInstall')?.classList.remove('hidden');
+    document.getElementById('btnInstallM')?.classList.remove('hidden');
+  });
+
+  async function doInstall() {
+    if (!deferredPrompt) { 
+      alert('If you do not see the button, use browser menu → Install app.');
+      return;
+    }
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;  // { outcome: 'accepted' | 'dismissed' }
+    deferredPrompt = null;
+    document.getElementById('btnInstall')?.classList.add('hidden');
+    document.getElementById('btnInstallM')?.classList.add('hidden');
+  }
+
+  document.getElementById('btnInstall')?.addEventListener('click', doInstall);
+  document.getElementById('btnInstallM')?.addEventListener('click', doInstall);
+
+  // Ẩn nút sau khi đã cài
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('btnInstall')?.classList.add('hidden');
+    document.getElementById('btnInstallM')?.classList.add('hidden');
+    console.log('PWA installed');
+  });
 </script>
 </body>
 </html>
