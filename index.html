@@ -235,6 +235,7 @@
             <div class="flex items-center gap-2 rounded-2xl bg-white/70 px-3 py-2 ring-1 ring-white/60 focus-within:ring-roseglass-400">
               <input id="newTitle" placeholder="Add a task that Future‑You will thank Past‑You for ✨" class="w-full bg-transparent outline-none placeholder:text-rose-400"/>
               <select id="newPrio" class="rounded-full bg-rose-100 px-2 py-1 text-xs"><option value="1">chill</option><option value="2" selected>normal</option><option value="3">spicy</option></select>
+              <select id="newTag" class="rounded-full bg-rose-100 px-2 py-1 text-xs"><option value="">no-tag</option><option value="work">work</option><option value="study">study</option><option value="personal">personal</option></select>
             </div>
             <button id="addBtn" class="inline-flex items-center justify-center gap-2 rounded-2xl bg-roseglass-400 px-4 py-2 font-semibold text-white shadow-lg hover:brightness-105 active:translate-y-px">＋ Add</button>
             <textarea id="newNote" placeholder="optional notes…" class="md:col-span-2 h-20 rounded-2xl bg-white/60 p-3 text-sm outline-none ring-1 ring-white/50 focus:ring-roseglass-400"></textarea>
@@ -322,6 +323,12 @@
                 border border-white/60 shadow-2xl p-5">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-xl font-bold">Weekly & Monthly Report</h3>
+        <select id="reportTagFilter" class="rounded-full bg-rose-100 px-2 py-1 text-xs">
+          <option value="">All</option>
+          <option value="work">Work</option>
+          <option value="study">Study</option>
+          <option value="personal">Personal</option>
+        </select>
         <div class="flex items-center gap-2">
           <button id="exportCSVBtn"
             class="px-3 py-1 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold">
@@ -498,35 +505,115 @@ function render(){
   const start=startOfMonth(selectedDate), end=endOfMonth(selectedDate); const first=start.getDay(); const wrap=$('#calendarGrid'); wrap.innerHTML=''; for(let i=0;i<first;i++){const s=document.createElement('div'); s.className='opacity-50'; wrap.appendChild(s)}
   const stats=computeMonthStats(selectedDate); stats.daily.forEach((d)=>{const btn=document.createElement('button');btn.className='relative aspect-square rounded-2xl p-2 text-left transition hover:bg-white/60 '+(d.iso===selectedDate?'bg-white/80 ring-2 ring-roseglass-300':'');btn.innerHTML=`<div class="flex h-full flex-col justify-between"><div class="flex items-center justify-between"><span class="text-sm font-semibold">${new Date(d.iso).getDate().toString().padStart(2,'0')}</span>${d.total>0?`<span class=\"block h-6 w-6 rounded-full border-2 border-pink-200 relative\"><span class=\"absolute inset-0 rounded-full\" style=\"box-shadow: inset 0 0 0 9999px rgba(251,113,133,${(d.done/d.total).toFixed(2)})\"></span></span>`:''}</div><div class="text-[10px] text-rose-700/70">${d.total>0?Math.round(d.done/d.total*100)+'%':''}</div></div>`;btn.addEventListener('click',()=>{selectedDate=d.iso;render()});wrap.appendChild(btn)});
   $('#monthCompletion').textContent=stats.completion+'%'; $('#monthBar').style.width=stats.completion+'%'; $('#doneCount').textContent=stats.done; $('#totalCount').textContent=stats.total; const streak=computeStreak(); $('#streakCount').textContent=streak+'🔥'; $('#streakText').textContent=streak+' days'; $('#miniDone').textContent=stats.done; $('#miniTotal').textContent=stats.total;
-  const list=tasksFor(selectedDate); const ul=$('#taskList'); ul.innerHTML=''; if(list.length===0)$('#emptyMsg').classList.remove('hidden'); else $('#emptyMsg').classList.add('hidden'); list.forEach(t=>{const li=document.createElement('li'); li.className='group rounded-2xl bg-white/70 p-3 ring-1 ring-white/60 hover:ring-roseglass-300'; 
-  li.innerHTML=`<div class="flex items-start gap-3"><button class="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full border ${t.done?'bg-roseglass-400 text-white border-roseglass-400':'border-roseglass-300 bg-white'}">
+  const list=tasksFor(selectedDate); const ul=$('#taskList'); ul.innerHTML=''; if(list.length===0)$('#emptyMsg').classList.remove('hidden'); else $('#emptyMsg').classList.add('hidden'); 
+  list.forEach(t => {
+  const li = document.createElement('li');
+  li.className = 'group rounded-2xl bg-white/70 p-3 ring-1 ring-white/60 hover:ring-roseglass-300'; 
+  li.innerHTML=`
+  <div class="flex items-start gap-3">
+    <button class="toggleBtn mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full border 
+    ${t.done?'bg-roseglass-400 text-white border-roseglass-400' : 'border-roseglass-300 bg-white'}">
     ${t.done?'✓':''}
     </button>
-    <div class="flex-1"><div contenteditable="true" class="taskTitle text-sm md:text-base ${t.done?'line-through opacity-60':''}">
+    <div class="flex-1">
+      <div contenteditable="true"
+        class="taskTitle text-sm md:text-base ${t.done?'line-through opacity-60':''}">
       ${t.title}
       </div>
       ${t.notes?`<div class="mt-1 text-xs text-rose-700/80">${t.notes}</div>`:''}
       <div class="mt-2 flex flex-wrap items-center gap-2 text-[10px]">
-        <span class="rounded-full px-2 py-0.5 ${t.priority==3?'bg-rose-200 text-rose-900':t.priority==2?'bg-pink-100 text-pink-900':'bg-fuchsia-100 text-fuchsia-900'}">
+        <span class="rounded-full px-2 py-0.5
+          ${t.priority==3?'bg-rose-200 text-rose-900':t.priority==2?'bg-pink-100 text-pink-900':'bg-fuchsia-100 text-fuchsia-900'}">
           priority: ${prioLabel(t.priority)}
           </span>
           ${t.status ? `<span class="rounded-full bg-white/70 ring-1 ring-white/50 px-2 py-0.5">${t.status}</span>` : ''}
-          ${(t.tags||[]).map(tag => `<span class="rounded-full bg-white/70 ring-1 ring-white/50 px-2 py-0.5">#${tag}</span>`).join('')}
+          ${(t.tags||[]).map(tag =>
+           `<span class="rounded-full bg-white/70 ring-1 ring-white/50 px-2 py-0.5">#${tag}</span>`
+          ).join('')}
           ${t.done?'<span class="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700\">completed</span>':''}
           </div>
         </div>
         <div class ="opacity-0 transition group-hover:opacity-100 flex gap-1">
           <button class="editBtn text-roseglass-500" title="Edit">✎</button>
-      <button class="delBtn  text-roseglass-500" title="Delete">🗑</button>
-    </div>
-  </div>
-`; 
-  const [toggleBtn,titleDiv,delBtn]=[li.querySelector('button'),li.querySelector('.taskTitle'),li.querySelectorAll('button')[1]]; toggleBtn.addEventListener('click',()=>{t.done=!t.done;saveState();render()}); titleDiv.addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.preventDefault();titleDiv.blur()}}); titleDiv.addEventListener('blur',()=>{t.title=titleDiv.textContent.trim()||t.title;saveState();render()}); delBtn.addEventListener('click',()=>{state.tasks=state.tasks.filter(x=>x.id!==t.id);saveState();render()}); ul.appendChild(li)});
+          <button class="delBtn  text-roseglass-500" title="Delete">🗑</button>
+        </div>
+      </div>
+    `; 
+  const toggleBtn = li.querySelector('.toggleBtn');
+  const titleDiv  = li.querySelector('.taskTitle');
+  const delBtn    = li.querySelector('.delBtn');
+  const editBtn   = li.querySelector('.editBtn');
+
+  toggleBtn.addEventListener('click', () => {
+    t.done = !t.done; saveState(); render();
+  });
+
+  titleDiv.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); titleDiv.blur(); }
+  });
+  titleDiv.addEventListener('blur', () => {
+    const v = titleDiv.textContent.trim();
+    if (v) t.title = v;
+    saveState(); render();
+  });
+
+  delBtn.addEventListener('click', () => {
+    state.tasks = state.tasks.filter(x => x.id !== t.id);
+    saveState(); render();
+  });
+
+  editBtn.addEventListener('click', () => openEditModal(t));
+
+  ul.appendChild(li);
+});
   const done=list.filter(x=>x.done).length; const total=list.length; const pct=total?Math.round(done/total*100):0; $('#dayCompletion').textContent=pct+'%'; $('#vibe').textContent=pct===100?'Blossoming':(pct>=60?'Rosy':(pct>0?'Petal':'Seed'));
   const labels=stats.daily.map(d=>new Date(d.iso).getDate()); const totalArr=stats.daily.map(d=>d.total); const doneArr=stats.daily.map(d=>d.done); const barCtx=$('#barChart').getContext('2d'); if(bar) bar.destroy(); bar=new Chart(barCtx,{type:'bar',data:{labels,datasets:[{label:'Total',data:totalArr},{label:'Completed',data:doneArr}]},options:{responsive:true,plugins:{legend:{display:true}},scales:{y:{beginAtZero:true}}}}); const pieCtx=$('#pieChart').getContext('2d'); if(pie) pie.destroy(); pie=new Chart(pieCtx,{type:'pie',data:{labels:['Done','Remaining'],datasets:[{data:[stats.done,Math.max(stats.total-stats.done,0)]}]}});
   $('#mm60').className=(pct>=60?'line-through opacity-60':''); $('#mm100').className=(pct===100?'line-through opacity-60':''); $('#mm50m').className=(stats.completion>=50?'line-through opacity-60':'');
   if (!$('#tab-garden').classList.contains('hidden')) updateGarden();
 }
+
+// ===== Edit Modal wiring =====
+let __editingId = null;
+
+function openEditModal(task) {
+  __editingId = task.id;
+  $('#eTitle').value  = task.title || '';
+  $('#eDate').value   = task.date  || toLocalISO(new Date());
+  $('#eStatus').value = task.status || '';
+  $('#eTags').value   = (task.tags || []).join(', ');
+  $('#eNotes').value  = task.notes || '';
+  $('#editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  __editingId = null;
+  $('#editModal').classList.add('hidden');
+}
+
+$('#editOverlay')?.addEventListener('click', closeEditModal);
+$('#editClose')?.addEventListener('click', closeEditModal);
+
+$('#editSave')?.addEventListener('click', () => {
+  if (!__editingId) return;
+  const t = state.tasks.find(x => x.id === __editingId);
+  if (!t) return;
+
+  t.title  = $('#eTitle').value.trim() || t.title;
+  t.date   = $('#eDate').value || t.date;
+  t.status = $('#eStatus').value.trim() || '';
+  t.tags   = ($('#eTags').value || '')
+              .split(',')
+              .map(s => s.trim())
+              .filter(Boolean);
+  t.notes  = $('#eNotes').value.trim() || null;
+
+  saveState();
+  closeEditModal();
+  // nếu bạn đang ở ngày khác, chuyển về đúng ngày mới sửa?
+  // selectedDate = t.date;
+  render();
+});
+
 $('#prevMonth').addEventListener('click',()=>{
   const d=new Date(selectedDate);
   d.setMonth(d.getMonth()-1);
@@ -534,7 +621,8 @@ $('#prevMonth').addEventListener('click',()=>{
     new Date(d.getFullYear(), d.getMonth(),
       Math.min(new Date(selectedDate).getDate(), endOfMonth(d).getDate())
     )
-  );   // ✅ local ISO
+  );   
+  // local ISO
   render();
 });
 $('#nextMonth').addEventListener('click',()=>{
@@ -544,7 +632,7 @@ $('#nextMonth').addEventListener('click',()=>{
     new Date(d.getFullYear(), d.getMonth(),
       Math.min(new Date(selectedDate).getDate(), endOfMonth(d).getDate())
     )
-  );   // ✅
+  );   
   render();
 });
 $('#todayBtn').addEventListener('click',()=>{selectedDate=todayISO(); render()});
@@ -554,6 +642,7 @@ function addTask(){
   const titleInput=$('#newTitle').value.trim();
   const noteInput=$('#newNote').value.trim();
   const prio=parseInt($('#newPrio').value||'2');
+  const tagValue   = ($('#newTag')?.value || '').trim();
   const title=titleInput||(noteInput?noteInput.slice(0,60):'');
   if(!title) return;
 
@@ -564,11 +653,11 @@ function addTask(){
     done:false,
     priority:prio,
     notes:noteInput||null,
-    status:'todo',      // 👈 mới
-    tags:[]             // 👈 mới
+    status:'todo',      
+    tags: tagValue ? [tagValue] : []            
   });
 
-  $('#newTitle').value=''; $('#newNote').value=''; $('#newPrio').value='2';
+  $('#newTitle').value=''; $('#newNote').value=''; $('#newPrio').value='2'; if ($('#newTag')) $('#newTag').value = '';
   saveState(); render();
 }
 
@@ -602,16 +691,17 @@ $('#newQuoteBtn')?.addEventListener('click',()=>{$('#quoteBox').textContent=QUOT
 showTab('tasks');
 
 // ===== Report helpers =====
-function startOfWeek(d = new Date()) {
+function startOfWeek(d = new Date(), weekStartsOn = 1) {
   const t = new Date(d); t.setHours(0,0,0,0);
-  const day = t.getDay(); // 0=Sun
-  t.setDate(t.getDate() - day); // về Chủ nhật tuần đó
+  const day = t.getDay();
+  const diff = (day - weekStartsOn + 7) % 7;
+  t.setDate(t.getDate() - diff);
   return t;
 }
-function computeRangeStatsInclusive(start, end) {
+function computeRangeStatsInclusive(start, end, sourceTasks = state.tasks) {
   const s = new Date(start), e = new Date(end);
   s.setHours(0,0,0,0); e.setHours(0,0,0,0);
-  const arr = state.tasks.filter(t => {
+  const arr = sourceTasks.filter(t => {
     const dt = new Date(t.date); dt.setHours(0,0,0,0);
     return dt >= s && dt <= e;
   });
@@ -631,27 +721,66 @@ function computeRangeStatsInclusive(start, end) {
 
 // open/close modal
 let weekChartInst, monthChartInst;
-function openReportModal() {
-  // WEEK: từ Chủ nhật -> hôm nay
+function allExistingTags(){
+  const s = new Set();
+  (state.tasks || []).forEach(t => (t.tags || []).forEach(tag => tag && s.add(tag)));
+  return Array.from(s).sort(); // ví dụ: ["personal","study","work","youtube",...]
+}
+
+function buildReportTagOptions(){
+  const sel = document.getElementById('reportTagFilter');
+  if (!sel) return;
+  const prev = sel.value || '';
+
+  const tags = allExistingTags();
+  sel.innerHTML = `<option value="">All</option>` +
+                  tags.map(t => `<option value="${t}">${t[0].toUpperCase()+t.slice(1)}</option>`).join('');
+
+  // giữ lại lựa chọn trước nếu còn tồn tại
+  if (prev && tags.includes(prev)) sel.value = prev;
+}
+
+function renderReport(){
+  const tag = document.getElementById('reportTagFilter')?.value || '';
+
+  // chọn nguồn dữ liệu theo tag
+  const source = tag ? state.tasks.filter(t => (t.tags || []).includes(tag)) : state.tasks;
+
+  // ----- TUẦN HIỆN TẠI -----
   const wStart = startOfWeek(new Date());
   const wEnd   = new Date(); wEnd.setHours(0,0,0,0);
-  const wStats = computeRangeStatsInclusive(wStart, wEnd);
+  const wStats = computeRangeStatsInclusive(wStart, wEnd, source);
 
-  // MONTH: dùng computeMonthStats đã có
-  const mStats = computeMonthStats(new Date());
+  // ----- TUẦN TRƯỚC -----
+  const prevStart = addDays(wStart, -7);
+  const prevEnd   = addDays(wEnd, -7);
+  const prevStats = computeRangeStatsInclusive(prevStart, prevEnd, source);
 
-  // Fill labels + numbers
-  $('#weekPct').textContent      = wStats.completion;
-  $('#weekDone').textContent     = wStats.done;
-  $('#weekTotal').textContent    = wStats.total;
-  $('#weekLabel').textContent    = `This week (${toLocalISO(wStart)} → ${toLocalISO(wEnd)})`;
+  const diffPct = prevStats.completion
+    ? Math.round(((wStats.completion - prevStats.completion) / prevStats.completion) * 100)
+    : 0;
 
-  $('#monthPctRpt').textContent   = mStats.completion;
-  $('#monthDoneRpt').textContent  = mStats.done;
-  $('#monthTotalRpt').textContent = mStats.total;
-  $('#monthLabelRpt').textContent = `This month (${fmtMonth(new Date())})`;
+  // Nhãn tuần + trend
+  const weekLabel = document.getElementById('weekLabel');
+  weekLabel.innerHTML =
+    `This week (${toLocalISO(wStart)} → ${toLocalISO(wEnd)})<br>
+     <span class="text-xs font-semibold ${diffPct >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+       ${diffPct >= 0 ? '↑' : '↓'} ${Math.abs(diffPct)}% vs last week
+     </span>`;
 
-  // Charts
+  // Số liệu tuần
+  document.getElementById('weekPct').textContent   = wStats.completion;
+  document.getElementById('weekDone').textContent  = wStats.done;
+  document.getElementById('weekTotal').textContent = wStats.total;
+
+  // ----- THÁNG HIỆN TẠI -----
+  const mStats = computeMonthStats(new Date(), source);
+  document.getElementById('monthPctRpt').textContent   = mStats.completion;
+  document.getElementById('monthDoneRpt').textContent  = mStats.done;
+  document.getElementById('monthTotalRpt').textContent = mStats.total;
+  document.getElementById('monthLabelRpt').textContent = `This month (${fmtMonth(new Date())})`;
+
+  // ----- BIỂU ĐỒ -----
   const wLabels = wStats.daily.map(d => new Date(d.iso).toLocaleDateString(undefined,{weekday:'short'}));
   const wDone   = wStats.daily.map(d => d.done);
   const wTotal  = wStats.daily.map(d => d.total);
@@ -663,20 +792,35 @@ function openReportModal() {
   if (weekChartInst) weekChartInst.destroy();
   if (monthChartInst) monthChartInst.destroy();
 
-  weekChartInst = new Chart($('#weekChart').getContext('2d'), {
+  weekChartInst = new Chart(document.getElementById('weekChart').getContext('2d'), {
     type: 'bar',
     data: { labels: wLabels, datasets: [{ label:'Total', data:wTotal }, { label:'Completed', data:wDone }] },
     options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
   });
 
-  monthChartInst = new Chart($('#monthChartRpt').getContext('2d'), {
+  monthChartInst = new Chart(document.getElementById('monthChartRpt').getContext('2d'), {
     type: 'bar',
     data: { labels: mLabels, datasets: [{ label:'Total', data:mTotal }, { label:'Completed', data:mDone }] },
     options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
   });
+}
 
-  // show
-  $('#reportModal').classList.remove('hidden');
+function openReportModal(){
+  // mở modal
+  document.getElementById('reportModal').classList.remove('hidden');
+
+  // build dropdown tag theo dữ liệu hiện có
+  buildReportTagOptions();
+
+  // render số liệu + chart lần đầu
+  renderReport();
+
+  // thay đổi tag thì render lại (gắn 1 lần)
+  const sel = document.getElementById('reportTagFilter');
+  if (sel && !sel._bound) {
+    sel.addEventListener('change', renderReport);
+    sel._bound = true;
+  }
 }
 function closeReportModal() {
   $('#reportModal').classList.add('hidden');
@@ -700,6 +844,8 @@ function exportCSVFromReport(){
   const wEnd   = new Date(); wEnd.setHours(0,0,0,0);
   const mStart = startOfMonth(new Date());
   const mEnd   = endOfMonth(new Date());
+  const selectedTag = document.getElementById('reportTagFilter')?.value || '';
+  const source = selectedTag ? state.tasks.filter(t => (t.tags || []).includes(selectedTag)) : state.tasks;
 
   // Stats
   const wStats = computeRangeStatsInclusive(wStart, wEnd);
