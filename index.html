@@ -806,6 +806,13 @@ const statusEls     = [document.getElementById('authStatus'),  document.getEleme
 const btnGoogleEls  = [document.getElementById('btnGoogle'),   document.getElementById('btnGoogleM')].filter(Boolean);
 const btnSignOutEls = [document.getElementById('btnSignOut'),  document.getElementById('btnSignOutM')].filter(Boolean);
 
+// Chỉ LÀM NHIỆM VỤ toggle UI, KHÔNG gắn click ở đây
+function applyAuthUI({ signedIn, name }) {
+  statusEls.forEach(el => el && (el.textContent = signedIn ? `Signed in (${name})` : 'Not signed in'));
+  btnGoogleEls.forEach(el => el && el.classList.toggle('hidden', signedIn));
+  btnSignOutEls.forEach(el => el && el.classList.toggle('hidden', !signedIn));
+}
+
 // Gắn click MỘT LẦN (đừng gắn lặp ở nơi khác)
 btnGoogleEls.forEach(btn => btn.addEventListener('click', async () => {
   try {
