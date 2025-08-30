@@ -243,6 +243,16 @@
 
           <ul id="taskList" class="space-y-2"></ul>
           <div id="emptyMsg" class="hidden rounded-2xl bg-white/60 p-6 text-center text-sm">No tasks for this day yet. Drop one above and let it bloom 🌸</div>
+          <!-- Daily Reflection -->
+          <div id="reflectCard" class="mt-3 rounded-2xl bg-white/60 p-3 ring-1 ring-white/60">
+            <div class="flex items-center justify-between">
+              <div class="text-sm font-semibold">Daily reflection</div>
+              <div id="reflectSaved" class="text-[10px] text-emerald-600 opacity-0 transition-opacity">Saved ✓</div>
+            </div>
+            <textarea id="dailyReflection"
+              placeholder="How did today go? Any wins, blockers, lessons…"
+              class="mt-2 w-full h-24 rounded-xl bg-white/70 p-2 text-sm outline-none ring-1 ring-white/60 focus:ring-roseglass-400"></textarea>
+          </div>
         </section>
 
         <!-- Statistic -->
@@ -359,6 +369,17 @@
           <canvas id="monthChartRpt" height="140"></canvas>
         </div>
       </div>
+      <!-- Weekly Reflection -->
+      <div class="mt-4 rounded-2xl bg-white/70 p-3 ring-1 ring-white/60">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-semibold">Weekly reflection</div>
+          <div id="weekReflectSaved" class="text-[10px] text-emerald-600 opacity-0 transition-opacity">Saved ✓</div>
+        </div>
+        <div id="weekRangeLabel" class="text-xs text-rose-700/70 mt-1"></div>
+        <textarea id="weekReflection"
+        placeholder="What went well? What will you improve next week?"
+        class="mt-2 w-full h-24 rounded-xl bg-white/70 p-2 text-sm outline-none ring-1 ring-white/60 focus:ring-roseglass-400"></textarea>
+      </div>
 
       <div class="mt-4 text-xs text-rose-700/70">
         *Report dựa trên dữ liệu task hiện có trong local/cloud.
@@ -427,7 +448,9 @@ function showTab(name){
   if(name==='timer') syncInputsFromRemaining();
 }
 $$('.navBtn').forEach(btn=> btn.addEventListener('click',()=> showTab(btn.dataset.tab)));
-
+const debounce = (fn, wait=500) => {
+  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+};
 // ========== Mobile hamburger sheet ==========
 const menuBtn     = $('#menuBtn');
 const mobileSheet = $('#mobileSheet');
@@ -473,9 +496,14 @@ let state=loadState(); let selectedDate=todayISO(); let bar,pie;
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const s = JSON.parse(raw);
+      s.reflections     = s.reflections     || {}; // key = 'YYYY-MM-DD'
+      s.weekReflections = s.weekReflections || {}; // key = 'YYYY-MM-DD' (thứ Hai đầu tuần)
+      return s;
+    }
   }catch(e){}
-  return { tasks: demoTasks() };
+  return { tasks: demoTasks(), reflections:{}, weekReflections:{} };
 }
 async function saveState(){
   try{
@@ -569,6 +597,19 @@ function render(){
   const done=list.filter(x=>x.done).length; const total=list.length; const pct=total?Math.round(done/total*100):0; $('#dayCompletion').textContent=pct+'%'; $('#vibe').textContent=pct===100?'Blossoming':(pct>=60?'Rosy':(pct>0?'Petal':'Seed'));
   const labels=stats.daily.map(d=>new Date(d.iso).getDate()); const totalArr=stats.daily.map(d=>d.total); const doneArr=stats.daily.map(d=>d.done); const barCtx=$('#barChart').getContext('2d'); if(bar) bar.destroy(); bar=new Chart(barCtx,{type:'bar',data:{labels,datasets:[{label:'Total',data:totalArr},{label:'Completed',data:doneArr}]},options:{responsive:true,plugins:{legend:{display:true}},scales:{y:{beginAtZero:true}}}}); const pieCtx=$('#pieChart').getContext('2d'); if(pie) pie.destroy(); pie=new Chart(pieCtx,{type:'pie',data:{labels:['Done','Remaining'],datasets:[{data:[stats.done,Math.max(stats.total-stats.done,0)]}]}});
   $('#mm60').className=(pct>=60?'line-through opacity-60':''); $('#mm100').className=(pct===100?'line-through opacity-60':''); $('#mm50m').className=(stats.completion>=50?'line-through opacity-60':'');
+  const rEl = document.getElementById('dailyReflection');
+  if (rEl) {
+    rEl.value = (state.reflections || {})[selectedDate] || '';
+    rEl.oninput = debounce(() => {
+      const v = rEl.value.trim();
+      state.reflections = state.reflections || {};
+      if (v) state.reflections[selectedDate] = v;
+      else   delete state.reflections[selectedDate];
+      saveState();
+      const tick = document.getElementById('reflectSaved');
+      if (tick) { tick.style.opacity = '1'; setTimeout(()=> tick.style.opacity='0', 800); }
+    }, 500);
+  }
   if (!$('#tab-garden').classList.contains('hidden')) updateGarden();
 }
 
@@ -784,25 +825,39 @@ function renderReport(){
   const wLabels = wStats.daily.map(d => new Date(d.iso).toLocaleDateString(undefined,{weekday:'short'}));
   const wDone   = wStats.daily.map(d => d.done);
   const wTotal  = wStats.daily.map(d => d.total);
-
   const mLabels = mStats.daily.map(d => new Date(d.iso).getDate());
   const mDone   = mStats.daily.map(d => d.done);
   const mTotal  = mStats.daily.map(d => d.total);
-
   if (weekChartInst) weekChartInst.destroy();
   if (monthChartInst) monthChartInst.destroy();
-
   weekChartInst = new Chart(document.getElementById('weekChart').getContext('2d'), {
     type: 'bar',
     data: { labels: wLabels, datasets: [{ label:'Total', data:wTotal }, { label:'Completed', data:wDone }] },
     options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
   });
-
   monthChartInst = new Chart(document.getElementById('monthChartRpt').getContext('2d'), {
     type: 'bar',
     data: { labels: mLabels, datasets: [{ label:'Total', data:mTotal }, { label:'Completed', data:mDone }] },
     options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
   });
+
+  // ---- bind Weekly Reflection (key = thứ Hai đầu tuần) ----
+  const wKey = toLocalISO(wStart);
+  document.getElementById('weekRangeLabel').textContent =
+    `${toLocalISO(wStart)} → ${toLocalISO(wEnd)}`;
+  const wBox = document.getElementById('weekReflection');
+  if (wBox) {
+    wBox.value = (state.weekReflections || {})[wKey] || '';
+    wBox.oninput = debounce(() => {
+      const v = wBox.value.trim();
+      state.weekReflections = state.weekReflections || {};
+      if (v) state.weekReflections[wKey] = v;
+      else   delete state.weekReflections[wKey];
+      saveState();
+      const tick = document.getElementById('weekReflectSaved');
+      if (tick) { tick.style.opacity = '1'; setTimeout(()=> tick.style.opacity='0', 800); }
+    }, 500);
+  }
 }
 
 function openReportModal(){
