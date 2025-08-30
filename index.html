@@ -726,7 +726,17 @@ $('#reportClose')?.addEventListener('click', closeReportModal);
 
   function applyAuthUI({ signedIn, name }) {
     statusEls.forEach(el => el && (el.textContent = signedIn ? `Signed in (${name})` : 'Not signed in'));
-    btnGoogleEls.forEach(el => el && el.classList.toggle('hidden', signedIn));
+    btnGoogleEls.forEach(btn => btn.addEventListener('click', async () => {
+      try {
+        const provider = new GoogleAuthProvider();
+        // 🔑 BẮT BUỘC MỞ ACCOUNT CHOOSER
+        provider.setCustomParameters({ prompt: 'select_account' });
+        await signInWithPopup(auth, provider);
+      } catch (e) {
+        alert('Google sign-in failed: ' + (e?.message || e));
+        console.error(e);
+      }
+    }));
     btnSignOutEls.forEach(el => el && el.classList.toggle('hidden', !signedIn));
   }
 
@@ -743,6 +753,13 @@ $('#reportClose')?.addEventListener('click', closeReportModal);
 
   // Click: Sign out (cả 2 nơi)
   btnSignOutEls.forEach(btn => btn.addEventListener('click', () => signOut(auth)));
+
+  document.getElementById('btnSwitchAccount')?.addEventListener('click', async () => {
+  await signOut(auth);                      // đăng xuất phiên hiện tại
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  await signInWithPopup(auth, provider);    // đăng nhập lại và chọn tài khoản khác
+  });
 
   // ---- Lắng nghe sự kiện save từ code Tasks và ghi Firestore ----
   window.addEventListener('muse:requestSave', async (e) => {
