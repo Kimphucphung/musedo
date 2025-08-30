@@ -503,7 +503,10 @@ function formatTime(s){const m=Math.floor(s/60).toString().padStart(2,'0'); cons
 function syncInputsFromRemaining(){const m=Math.floor(tRemaining/60); const s=tRemaining%60; $('#tMin') && ($('#tMin').value=m); $('#tSec') && ($('#tSec').value=s.toString().padStart(2,'0')); $('#tDisplay') && ($('#tDisplay').textContent=formatTime(tRemaining));}
 function readInputsToRemaining(){const m=parseInt($('#tMin').value||'0',10); const s=parseInt($('#tSec').value||'0',10); tRemaining=Math.max(0,m*60+Math.min(59,s)); $('#restBanner')?.classList.add('hidden'); $('#tDisplay').textContent=formatTime(tRemaining);}
 function playBeep(){const ctx=new (window.AudioContext||window.webkitAudioContext)(); const o=ctx.createOscillator(); const g=ctx.createGain(); o.type='sine'; o.frequency.value=880; o.connect(g); g.connect(ctx.destination); g.gain.setValueAtTime(0.001,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+0.02); o.start(); setTimeout(()=>{g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.25); o.stop(ctx.currentTime+0.3);},250);} 
-function onTimerEnd(){ playBeep(); $('#restBanner')?.classList.remove('hidden'); }
+function onTimerEnd(){
+  playBeep();
+  $('#restBanner')?.classList.remove('hidden');
+  notify('Time’s up!', { body: 'Take a short break, honey ✨' });}
 function startTimer(){ if(tId) return; readInputsToRemaining(); if(tRemaining<=0) return; tId=setInterval(()=>{ tRemaining--; $('#tDisplay').textContent=formatTime(tRemaining); if(tRemaining<=0){ clearInterval(tId); tId=null; onTimerEnd(); } },1000);} 
 function pauseTimer(){ if(tId){clearInterval(tId); tId=null;} }
 function resetTimer(){ pauseTimer(); readInputsToRemaining(); $('#restBanner')?.classList.add('hidden'); }
@@ -844,5 +847,74 @@ $('#reportClose')?.addEventListener('click', closeReportModal);
     console.log('PWA installed');
   });
 </script>
+<script>
+// Xin quyền (gọi 1 lần ở phiên đầu)
+async function ensureNotificationPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') return false;
+  const perm = await Notification.requestPermission();
+  return perm === 'granted';
+}
+
+// Gửi thông báo (ưu tiên service worker để hiện cả khi PWA chạy nền)
+async function notify(title, options = {}) {
+  try {
+    if (!(await ensureNotificationPermission())) return;
+
+    // Nếu có SW, dùng showNotification
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration('/musedo/');
+      if (reg && reg.showNotification) {
+        return reg.showNotification(title, {
+          body: options.body,
+          icon: '/musedo/Asset/icon-192.png',
+          badge: '/musedo/Asset/icon-192.png',
+          vibrate: [100, 50, 100],
+          tag: options.tag || 'musedo',
+          data: options.data || {},
+        });
+      }
+    }
+    // Fallback: Notification API trực tiếp
+    new Notification(title, {
+      body: options.body,
+      icon: '/musedo/Asset/icon-192.png'
+    });
+  } catch (e) {
+    console.warn('notify error', e);
+  }
+}
+
+// Gợi ý quyền sau khi người dùng có thao tác (tránh xin quyền ngay khi vào trang)
+document.addEventListener('click', () => {
+  ensureNotificationPermission(); // gọi nhẹ nhàng 1 lần sau tương tác
+}, { once: true });
+</script>
+<script>
+// Nhắc sau mỗi ~6h nếu hôm nay chưa có task done
+(function lightDailyNudge(){
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+  function shouldNudge() {
+    try {
+      const state = JSON.parse(localStorage.getItem('weird-productivity-nobuild-v3')||'{}');
+      const todayISO = new Date().toISOString().slice(0,10);
+      const done = (state.tasks||[]).filter(t => t.date === todayISO && t.done).length;
+      return done === 0;
+    } catch { return false; }
+  }
+  setTimeout(async () => {
+    if (shouldNudge()) {
+      await notify('One tiny win today?', { body: 'Mark 1 task done to keep the streak 🔥' });
+    }
+  }, 10 * 1000); // nhắc nhẹ sau 10s mở app
+  setInterval(async () => {
+    if (shouldNudge()) {
+      await notify('Tiny check-in ✨', { body: 'Complete any 1 task today!' });
+    }
+  }, SIX_HOURS);
+})();
+</script>
+
 </body>
 </html>
