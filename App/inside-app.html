@@ -1,0 +1,1570 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Muse Do Work | Productivity Work Measurement Tool</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#f43f5e">
+  <link rel="canonical" href="https://kimphucphung.github.io/musedo/" />
+<meta name="robots" content="index, follow" />
+<meta name="google-site-verification" content="ma9GkYZj1BeMU-Wbcw4Gpi2vh4ii4trJWSZnwu7USTo" />
+<!-- SEO Meta Tags -->
+<meta name="description" content="Muse.do - A dreamy productivity & work measurement tool. Track tasks, focus with timers, and grow your achievement garden.">
+<meta name="keywords" content="Muse Do Work, muse.do, musedo, musedowork, productivity measurement, productivity, productivity tool, task management, task manager, pomodoro timer, habit tracker, achievement garden, focus tool, focus timer, pomodoro, digital garden, achievement garden, work measurement, self-diciphline, habit tracking, indie hacker tool, aesthetic productivity app, weird productivity, dreamy productivity">
+<meta name="author" content="Tin Artsy">
+
+<!-- Open Graph (Facebook, LinkedIn) -->
+<meta property="og:title" content="Muse.do | Productivity Work Measurement Tool">
+<meta property="og:description" content="Track tasks, measure productivity, focus with timers, and watch your progress bloom in the garden 🌸.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kimphucphung.github.io/musedo/">
+<meta property="og:image" content="https://kimphucphung.github.io/musedo/Asset/Home%20Page.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Muse.do | Productivity Work Measurement Tool">
+<meta name="twitter:description" content="Tiny tasks, tiny wins. Organize your day and grow your productivity garden.">
+<meta name="twitter:image" content="https://kimphucphung.github.io/musedo/Asset/Home%20Page.png">
+
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            roseglass: { 50:'#fff1f5',100:'#ffe4ec',200:'#fecdd6',300:'#fda4b8',400:'#fb7185',500:'#f43f5e' }
+          },
+          boxShadow: { glass: '0 10px 40px -10px rgba(240,46,170,.25)' }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .blob{filter:blur(60px);opacity:.7}
+    /* Garden visuals */
+    .garden-water {background: radial-gradient(120% 120% at 50% 0%, #fdf2f8 0%, #ffe4e6 35%, #fbcfe8 70%, #f5d0fe 100%);} 
+    .island {position:relative;width:90%;max-width:760px;margin: auto; height:380px;border-radius:50% 50% 45% 55% / 60% 40% 60% 40%;background: radial-gradient(60% 60% at 50% 40%, #bbf7d0 0%, #86efac 45%, #22c55e 60%, #16a34a 75%, #0ea5e9 120%);box-shadow: inset 0 8px 30px rgba(0,0,0,.15), 0 15px 40px rgba(0,0,0,.25);}    .flower {position:absolute; transform-origin: bottom center;} 
+    .flower svg {filter: drop-shadow(0 6px 10px rgba(0,0,0,.1));}
+    .flower.sm {transform: translate(-50%, -100%) scale(.8)  rotate(var(--rot,0deg));}
+    .flower.md {transform: translate(-50%, -100%) scale(1)    rotate(var(--rot,0deg));}
+    .flower.lg {transform: translate(-50%, -100%) scale(1.35) rotate(var(--rot,0deg));}
+  </style>
+  <style>
+  /* ===== AI FAB & Panel (khớp aesthetic rose/glass) ===== */
+  .ai-fab{
+    position:fixed; right:16px; bottom:16px; z-index:60;
+    height:56px; width:56px; border-radius:9999px;
+    background:rgba(255,255,255,.9);
+    border:1px solid rgba(244,63,94,.18);
+    box-shadow:0 16px 40px -12px rgba(244,63,94,.28);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+  }
+  .ai-fab:hover{ filter:brightness(1.05); }
+
+  .ai-panel{
+    position:fixed; right:16px; bottom:88px; z-index:60;
+    width:min(92vw, 460px);
+    border-radius:24px;
+    background:rgba(255,255,255,.88);
+    backdrop-filter: blur(8px) saturate(130%);
+    border:1px solid rgba(244,63,94,.16);
+    box-shadow:0 24px 60px -16px rgba(244,63,94,.28);
+  }
+  .ai-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 10px; border-radius:9999px;
+    background:rgba(255,255,255,.9);
+    border:1px solid rgba(244,63,94,.18);
+    font-size:12px; font-weight:600; color:#7f1d1d;
+  }
+  .ai-sep{ height:1px; background:linear-gradient(90deg,#0000,#fbcfe7,#0000); opacity:.5; }
+
+  /* nhỏ xíu cho mobile */
+  @media (max-width: 420px){
+    .ai-fab{ right:12px; bottom:12px; height:52px; width:52px; }
+    .ai-panel{ right:12px; bottom:76px; }
+  }
+</style>
+</head>
+<body class="theme-gradient min-h-screen text-rose-900 relative overflow-x-hidden">
+  <div class="bg-hero absolute inset-0 -z-10"></div>
+  <!-- dreamy backdrop -->
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-pink-100 via-rose-100 to-fuchsia-100"></div>
+  <div class="blob themed-blob fixed -top-24 -left-28 h-80 w-80 rounded-full bg-pink-200"></div>
+  <div class="blob themed-blob fixed top-40 -right-20 h-96 w-96 rounded-full bg-fuchsia-200"></div>
+  <div class="blob themed-blob fixed bottom-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose-200"></div>
+
+  <!-- NAV BAR -->
+<nav class="sticky top-0 z-50 bg-white/50 backdrop-blur-xl border-b border-white/40 shadow-glass">
+  <div class="relative mx-auto max-w-6xl px-4 sm:px-6 py-3 md:py-4 min-h-[56px] md:min-h-[64px] flex items-center md:justify-between">
+    <!-- BRAND: mobile ở giữa (absolute), desktop bên trái (static) -->
+    <div class="absolute left-1/2 -translate-x-1/2 md:static md:left-auto md:translate-x-0">
+      <a href="#" 
+        onclick="showTab('tasks'); return false;" 
+        class="text-2xl md:text-3xl font-black tracking-tight select-none text-center md:text-left">
+        muse.do
+      </a>
+    </div>
+    <!-- HAMBURGER: chỉ mobile, đặt absolute bên phải -->
+    <button id="menuBtn"
+      class="md:hidden absolute right-4 top-1/2 -translate-y-1/2
+             inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-white/70"
+      aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <!-- Tabs + Auth (chỉ desktop, nằm bên phải) -->
+    <div class="order-3 hidden md:flex items-center gap-4 ml-auto">
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
+                     data-[active=true]:bg-rose-400 data-[active=true]:text-white"
+              data-tab="tasks">Tasks</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
+                     data-[active=true]:bg-rose-400 data-[active=true]:text-white"
+              data-tab="garden">Garden</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
+                     data-[active=true]:bg-rose-400 data-[active=true]:text-white"
+              data-tab="timer">Timer</button>
+      <button class="navBtn px-3 py-1 rounded-full font-semibold hover:bg-white/70
+                     data-[active=true]:bg-rose-400 data-[active=true]:text-white"
+              data-tab="quotes">Quotes</button>
+      <!-- Donate -->
+      <button id="btnInstall" class="px-3 py-1 rounded-full bg-rose-100 hover:bg-rose-200 font-semibold">
+      Download for Window
+      </button>
+      <!-- <a href="https://buymeacoffee.com/tinmadedesign" target="_blank" rel="noopener"
+         class="px-3 py-1 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold">
+        ❤️ Buymeacoffee
+      </a> -->
+      <div class="theme-switcher">
+        <label class="sr-only" for="themeSelectDesktop">Theme</label>
+        <select id="themeSelectDesktop" class="theme-select" title="Theme">
+          <option value="rose">🌹</option>
+          <option value="daylight">🌞</option>
+          <option value="night">🌙</option>
+        </select>
+      </div>
+
+      <!-- Auth (desktop) -->
+      <div id="authBox" class="text-sm flex items-center gap-2">
+        <span id="authStatus" class="opacity-70">Not signed in</span>
+        <button id="btnGoogle" class="px-3 py-1 rounded-full bg-white/70 hover:bg-white">
+          Sign in with Google
+        </button>
+        <button id="btnSignOut" class="hidden px-3 py-1 rounded-full bg-white/70 hover:bg-white">
+          Sign out
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE SIDE DRAWER (NEW) -->
+<div id="mobileSheet" class="fixed inset-0 z-50 hidden">
+  <!-- overlay -->
+  <div id="sheetOverlay" class="absolute inset-0 bg-black/20 backdrop-blur-[2px]"></div>
+  <!-- panel -->
+  <div id="sheetPanel"
+       class="absolute right-0 top-0 h-full w-64 max-w-[80%] bg-white/90 backdrop-blur-xl border-l border-white/60 shadow-xl
+              translate-x-full transition-transform duration-300">
+    <div class="p-4 border-b border-white/60 flex items-center justify-between">
+      <div class="font-bold">Menu</div>
+      <button id="sheetClose" class="h-8 w-8 rounded-full hover:bg-white/70" aria-label="Close">✕</button>
+    </div>
+    <!-- Subtitle pill chỉ hiện trên mobile -->
+    <div class="px-4 py-3 md:hidden">
+      <span
+        class="inline-flex items-center rounded-full bg-rose-200/60
+        px-3 py-1 text-xs font-semibold text-rose-800 border border-white/50">Tin Work Measurement
+      </span>
+      <div class="theme-switcher">
+        <label class="sr-only" for="themeSelectMobile">Theme</label>
+        <select id="themeSelectMobile" class="theme-select" title="Theme">
+          <option value="rose">🌹</option>
+          <option value="daylight">🌞</option>
+          <option value="night">🌙</option>
+        </select>
+      </div>
+      <div class="p-3 flex flex-col gap-2">
+        <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="tasks">Tasks</button>
+        <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="garden">Garden</button>
+        <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="timer">Timer</button>
+        <button class="mobileTabBtn text-left px-3 py-2 rounded-xl hover:bg-white" data-tab="quotes">Quotes</button>
+      </div>
+      <!-- Auth trong drawer (chỉ mobile) -->
+    <div class="mt-2 p-3 border-t border-white/60 md:hidden">
+        <div class="text-xs opacity-70 mb-2" id="authStatusM">Not signed in</div>
+        <div class="flex gap-2">
+          <button id="btnGoogleM" class="px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign in with Google</button>
+          <button id="btnSignOutM" class="hidden px-3 py-1 rounded-full bg-white/70 hover:bg-white">Sign out</button>
+        </div>
+        <button id="btnInstallM" class="mt-2 px-3 py-2 rounded-full bg-rose-100 font-semibold">
+        Install app
+        </button>
+        <!--<a href="https://buymeacoffee.com/tinmadedesign" target="_blank" class="mt-2 inline-block px-3 py-2 rounded-full bg-rose-100 text-rose-900 font-semibold">❤️ Buymeacoffee</a>-->
+    </div>
+  </div>
+</div>
+</div>
+
+  <main>
+    <!-- ============ TAB: TASKS ============ -->
+<section id="tab-tasks">
+  <header class="px-6 pt-8 pb-4">
+    <div class="mx-auto flex max-w-6xl items-center justify-between">
+      <!-- LEFT: brand + subtitle -->
+      <h1 class="flex items-center gap-3">
+        <!-- logo text -->
+        <span class="select-none leading-none 
+                     text-4xl md:text-5xl font-black tracking-tight">
+          <span class="text-rose-900">muse.</span>
+          <span class="text-roseglass-500">do</span>
+        </span>
+        <!-- subtitle pill -->
+        <span
+           class="hidden md:inline-flex inline-flex items-center rounded-full bg-rose-200/60 px-3 py-1 text-xs font-semibold text-rose-800 border border-white/50">Tin Work Measurement
+        </span>
+      </h1>
+      <!-- RIGHT: Today button -->
+      <div class="flex items-center gap-2">
+        <button id="todayBtn"
+          class="rounded-full px-3 py-2 backdrop-blur-xl bg-white/50
+                 border border-white/40 shadow-glass hover:bg-white/60 transition">
+          Today
+        </button>
+
+        <button id="reportBtn"
+          class="rounded-full px-3 py-2 backdrop-blur-xl bg-white/60
+                 border border-white/40 shadow-glass hover:bg-white/80 transition">
+          Report
+        </button>
+      </div>
+    </div>
+  </header>
+
+      <section class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 pb-16 md:grid-cols-[300px_1fr] lg:grid-cols-[300px_minmax(400px,1fr)_360px]">
+        <!-- Calendar -->
+        <aside class="rounded-3xl p-4 md:p-5 backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
+          <div class="mb-3 flex items-center justify-between">
+            <button id="prevMonth" class="rounded-full p-2 hover:bg-white/70">
+              <div class="flex items-center justify-center"><img src="Asset/left-arrow.png" alt="" class="h-4 object-contain rounded-xl "></div>
+            </button>
+            <div id="monthLabel" class="font-semibold flex items-center gap-2">📅</div>
+            <button id="nextMonth" class="rounded-full p-2 hover:bg-white/70">
+              <div class="flex items-center justify-center"><img src="Asset/right-arrow.png" alt="" class="h-4 object-contain rounded-xl "></div>
+            </button>
+          </div>
+          <div class="grid grid-cols-7 text-center text-xs font-medium text-rose-600/80">
+            <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+          </div>
+          <div id="calendarGrid" class="grid grid-cols-7 gap-2"></div>
+          <div class="mt-4 rounded-2xl p-3 bg-white/60">
+            <div class="flex items-center justify-between text-sm"><span>Month completion</span><span id="monthCompletion" class="font-semibold">0%</span></div>
+            <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-rose-100"><div id="monthBar" class="h-2 rounded-full bg-roseglass-400" style="width:0%"></div></div>
+            <div class="mt-2 grid grid-cols-3 text-center text-xs"><div><div id="doneCount" class="font-semibold">0</div><div>done</div></div><div><div id="totalCount" class="font-semibold">0</div><div>tasks</div></div><div><div id="streakCount" class="font-semibold">0🔥</div><div>streak</div></div></div>
+          </div>
+        </aside>
+
+        <!-- Note Track Center -->
+        <section class="relative overflow-hidden rounded-3xl p-4 md:p-6 backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
+          <div class="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-rose-200/70 blur-3xl"></div>
+          <div class="mb-4 flex items-center justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-wide text-rose-700/70">DAY</div>
+              <h2 id="dayLabel" class="text-2xl font-extrabold tracking-tight"></h2>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-rose-700/70">Completion</div>
+              <div id="dayCompletion" class="text-xl font-black">0%</div>
+              <div class="text-[10px] inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-1 mt-1">✨ vibe: <span id="vibe" class="font-semibold">Seed</span></div>
+            </div>
+          </div>
+
+          <div class="mb-4 grid grid-cols-1 gap-2 md:grid-cols-[1fr_auto]">
+            <div class="flex items-center gap-2 rounded-2xl bg-white/70 px-3 py-2 ring-1 ring-white/60 focus-within:ring-roseglass-400">
+              <input id="newTitle" placeholder="Add a task that Future‑You will thank Past‑You for ✨" class="w-full bg-transparent outline-none placeholder:text-rose-400"/>
+              <select id="newPrio" class="rounded-full bg-rose-100 px-2 py-1 text-xs"><option value="1">chill</option><option value="2" selected>normal</option><option value="3">spicy</option></select>
+              <select id="newTag" class="rounded-full bg-rose-100 px-2 py-1 text-xs"><option value="">no-tag</option><option value="work">work</option><option value="study">study</option><option value="personal">personal</option></select>
+            </div>
+            <button id="addBtn" class="inline-flex items-center justify-center gap-2 rounded-2xl bg-roseglass-400 px-4 py-2 font-semibold text-white shadow-lg hover:brightness-105 active:translate-y-px">＋ Add</button>
+            <textarea id="newNote" placeholder="optional notes…" class="md:col-span-2 h-20 rounded-2xl bg-white/60 p-3 text-sm outline-none ring-1 ring-white/50 focus:ring-roseglass-400"></textarea>
+          </div>
+
+          <ul id="taskList" class="space-y-2"></ul>
+          <div id="emptyMsg" class="hidden rounded-2xl bg-white/60 p-6 text-center text-sm">No tasks for this day yet. Drop one above and let it bloom 🌸</div>
+          <!-- Daily Reflection -->
+          <div id="reflectCard" class="mt-3 rounded-2xl bg-white/60 p-3 ring-1 ring-white/60">
+            <div class="flex items-center justify-between">
+              <div class="text-sm font-semibold">Daily reflection</div>
+              <div id="reflectSaved" class="text-[10px] text-emerald-600 opacity-0 transition-opacity">Saved ✓</div>
+            </div>
+            <textarea id="dailyReflection"
+              placeholder="How did today go? Any wins, blockers, lessons…"
+              class="mt-2 w-full h-24 rounded-xl bg-white/70 p-2 text-sm outline-none ring-1 ring-white/60 focus:ring-roseglass-400"></textarea>
+          </div>
+        </section>
+
+        <!-- Statistic -->
+        <aside class="block rounded-3xl p-4 backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
+          <div class="mb-3 flex items-center justify-between"><h3 class="text-lg font-bold">Stats & Patterns</h3><div id="statsMonth" class="text-xs text-rose-700/70"></div></div>
+          <div class="h-40 w-full rounded-2xl bg-white/70 p-2"><canvas id="barChart" height="140"></canvas></div>
+          <div class="mt-3 grid grid-cols-2 gap-3">
+            <div class="rounded-2xl bg-white/70 p-2"><canvas id="pieChart" height="160"></canvas><div class="text-center text-xs"><span id="miniDone">0</span>/<span id="miniTotal">0</span> done</div></div>
+            <div class="rounded-2xl bg-white/70 p-4"><div class="text-xs text-rose-700/70">Streak</div><div id="streakText" class="text-3xl font-black">0 days</div><div class="mt-2 text-xs">Keep one tiny win per day. Your future self is applauding 🎀</div></div>
+          </div>
+          <div class="mt-3 rounded-2xl bg-white/70 p-4"><div class="flex items-center gap-2 text-sm font-semibold">✨ Mini milestones</div>
+            <ul class="mt-2 list-disc pl-5 text-sm"><li id="mm60">Reach 60% today</li><li id="mm100">Perfect day (100%)</li><li id="mm50m">50%+ this month</li></ul>
+          </div>
+        </aside>
+      </section>
+    </section>
+
+    <!-- ============ TAB: GARDEN ============ -->
+    <section id="tab-garden" class="hidden px-6 py-8">
+      <div class="mx-auto max-w-5xl rounded-3xl p-6 backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
+        <div class="flex items-center justify-between"><h2 class="text-2xl font-bold">Achievement Garden 🌱</h2><div class="text-xs text-rose-700/70" id="gardenMonth"></div></div>
+        <div class="garden-water mt-4 rounded-3xl p-4"><div class="island mx-auto relative" id="gardenCanvas"></div></div>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+          <div class="rounded-2xl bg-white/70 p-3"><div class="font-semibold">Rules</div><div>Complete <b>every day tasks</b> will plant <b>a flower</b>.</div><div>2–4 task → <b>small</b> flower, 5–6 → <b>medium</b>, ≥7 → <b>big</b>.</div></div>
+          <div class="rounded-2xl bg-white/70 p-3"><div class="font-semibold">Today</div><div id="gardenToday"></div></div>
+          <div class="rounded-2xl bg-white/70 p-3"><div class="font-semibold">Tip</div><div>Come back and complete daily tasks to see the flowers bloom 🌸</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TAB: TIMER ============ -->
+    <section id="tab-timer" class="hidden px-6 py-8">
+      <div class="mx-auto max-w-xl rounded-3xl p-6 text-center backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
+        <h2 class="text-2xl font-bold mb-2">Focus Timer ⏳</h2>
+        <div class="text-sm text-rose-700/70 mb-4">Select working time, press Start. When time is up, it will ring + remind you to take a break.</div>
+        <div class="flex items-center justify-center gap-2 mb-4">
+          <input id="tMin" type="number" min="0" value="25" class="w-20 rounded-xl bg-white/80 p-2 text-center ring-1 ring-white/60" />
+          <span>:</span>
+          <input id="tSec" type="number" min="0" max="59" value="00" class="w-20 rounded-xl bg-white/80 p-2 text-center ring-1 ring-white/60" />
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-2 mb-4">
+          <button class="px-3 py-1 rounded-full bg-rose-100" data-preset="25">Pomodoro 25</button>
+          <button class="px-3 py-1 rounded-full bg-rose-100" data-preset="5">Break 5</button>
+          <button class="px-3 py-1 rounded-full bg-rose-100" data-preset="15">Break 15</button>
+        </div>
+        <div class="text-5xl font-black tracking-wider mb-4" id="tDisplay">25:00</div>
+        <div class="flex items-center justify-center gap-3">
+          <button id="tStart" class="px-4 py-2 rounded-full bg-rose-400 text-white shadow">Start</button>
+          <button id="tPause" class="px-4 py-2 rounded-full bg-white/90 shadow ring-1 ring-white/60">Pause</button>
+          <button id="tReset" class="px-4 py-2 rounded-full bg-white/90 shadow ring-1 ring-white/60">Reset</button>
+        </div>
+        <div id="restBanner" class="hidden mt-6 rounded-2xl bg-white/80 p-4 ring-1 ring-white/60">
+          <div class="text-xl font-bold mb-2">Don't Overwork Yourself 💗</div>
+          <div class="mb-3">Give Yourself <b>15 Minutes</b> Rest, Honey.</div>
+          <div class="flex items-center justify-center">
+            <img src="Asset/cat-meme.png" alt="cat-meme" class="h-32 object-contain rounded-xl shadow" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TAB: QUOTES ============ -->
+    <section id="tab-quotes" class="hidden px-6 py-8">
+      <div class="mx-auto max-w-xl rounded-3xl p-6 text-center backdrop-blur-xl bg-white/50 border border-white/40 shadow-glass">
+        <h2 class="text-2xl font-bold mb-4">Weird Inspiration ✨</h2>
+        <blockquote id="quoteBox" class="italic">Click button to get a quote!</blockquote>
+        <button id="newQuoteBtn" class="mt-4 px-4 py-2 rounded-full bg-rose-400 text-white">New Quote</button>
+      </div>
+    </section>
+
+      <!-- Weekly/Monthly Report Modal -->
+  <div id="reportModal" class="fixed inset-0 z-[60] hidden">
+    <!-- overlay -->
+    <div id="reportOverlay" class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+    <!-- panel -->
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                w-[92vw] max-w-3xl rounded-3xl bg-white/90 backdrop-blur-xl
+                border border-white/60 shadow-2xl p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl font-bold">Weekly & Monthly Report</h3>
+        <select id="reportTagFilter" class="rounded-full bg-rose-100 px-2 py-1 text-xs">
+          <option value="">All</option>
+          <option value="work">Work</option>
+          <option value="study">Study</option>
+          <option value="personal">Personal</option>
+        </select>
+        <div class="flex items-center gap-2">
+          <button id="exportCSVBtn"
+            class="px-3 py-1 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold">
+            Export CSV
+          </button>
+          <button id="reportClose" class="h-8 w-8 rounded-full hover:bg-white/70">✕</button>
+         </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- WEEK -->
+        <div class="rounded-2xl bg-white/70 p-4 ring-1 ring-white/60">
+          <div class="text-sm text-rose-700/70 mb-1" id="weekLabel">This week</div>
+          <div class="text-3xl font-black mb-2"><span id="weekPct">0</span>%</div>
+          <div class="text-xs mb-2">
+            <b><span id="weekDone">0</span>/<span id="weekTotal">0</span></b> tasks completed
+          </div>
+          <canvas id="weekChart" height="140"></canvas>
+        </div>
+
+        <!-- MONTH -->
+        <div class="rounded-2xl bg-white/70 p-4 ring-1 ring-white/60">
+          <div class="text-sm text-rose-700/70 mb-1" id="monthLabelRpt">This month</div>
+          <div class="text-3xl font-black mb-2"><span id="monthPctRpt">0</span>%</div>
+          <div class="text-xs mb-2">
+            <b><span id="monthDoneRpt">0</span>/<span id="monthTotalRpt">0</span></b> tasks completed
+          </div>
+          <canvas id="monthChartRpt" height="140"></canvas>
+        </div>
+      </div>
+      <!-- Weekly Reflection -->
+      <div class="mt-4 rounded-2xl bg-white/70 p-3 ring-1 ring-white/60">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-semibold">Weekly reflection</div>
+          <div id="weekReflectSaved" class="text-[10px] text-emerald-600 opacity-0 transition-opacity">Saved ✓</div>
+        </div>
+        <div id="weekRangeLabel" class="text-xs text-rose-700/70 mt-1"></div>
+        <textarea id="weekReflection"
+        placeholder="What went well? What will you improve next week?"
+        class="mt-2 w-full h-24 rounded-xl bg-white/70 p-2 text-sm outline-none ring-1 ring-white/60 focus:ring-roseglass-400"></textarea>
+      </div>
+
+      <div class="mt-4 text-xs text-rose-700/70">
+        *Report dựa trên dữ liệu task hiện có trong local/cloud.
+      </div>
+    </div>
+  </div>
+  <!-- Edit Task Modal -->
+<div id="editModal" class="fixed inset-0 z-[70] hidden">
+  <div id="editOverlay" class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+              w-[92vw] max-w-md rounded-3xl bg-white/90 backdrop-blur-xl
+              border border-white/60 shadow-2xl p-5">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-bold">Edit item</h3>
+      <button id="editClose" class="h-8 w-8 rounded-full hover:bg-white/70">✕</button>
+    </div>
+
+    <div class="grid gap-3 text-sm">
+      <label class="grid gap-1">
+        <span>Title</span>
+        <input id="eTitle" class="rounded-xl bg-white/80 p-2 ring-1 ring-white/60" />
+      </label>
+      <label class="grid gap-1">
+        <span>Date</span>
+        <input id="eDate" type="date" class="rounded-xl bg-white/80 p-2 ring-1 ring-white/60" />
+      </label>
+      <label class="grid gap-1">
+        <span>Status (free text)</span>
+        <input id="eStatus" placeholder="todo/draft/scheduled/posted…" class="rounded-xl bg-white/80 p-2 ring-1 ring-white/60" />
+      </label>
+      <label class="grid gap-1">
+        <span>Tags (comma separated)</span>
+        <input id="eTags" placeholder="youtube, idea" class="rounded-xl bg-white/80 p-2 ring-1 ring-white/60" />
+      </label>
+      <label class="grid gap-1">
+        <span>Notes</span>
+        <textarea id="eNotes" rows="3" class="rounded-xl bg-white/80 p-2 ring-1 ring-white/60"></textarea>
+      </label>
+    </div>
+
+    <div class="mt-4 flex justify-end gap-2">
+      <button id="editSave" class="px-4 py-2 rounded-full bg-rose-400 text-white">Save</button>
+    </div>
+  </div>
+</div>
+<!-- ===== AI FAB + PANEL ===== -->
+<button id="aiFab" class="ai-fab" title="Muse AI">✨</button>
+<div id="aiPanel" class="ai-panel hidden">
+  <div class="p-4 pb-2">
+    <div class="flex items-center justify-between">
+      <div class="ai-pill">🤖 Muse AI</div>
+      <button id="aiClose" class="h-9 w-9 rounded-full border border-rose-100 bg-white/80 hover:bg-white">✕</button>
+    </div>
+    <h3 class="mt-3 text-lg font-bold text-rose-900">Boost your tiny wins</h3>
+    <p class="text-sm text-rose-700/80">Enter ideas/notes, AI will help you create tasks, summarize the day, tag & prioritize automatically.</p>
+    <textarea id="aiInput"
+      class="mt-3 w-full h-24 rounded-2xl bg-white/70 p-3 text-sm outline-none ring-1 ring-white/60 focus:ring-roseglass-400"
+      placeholder="Eg: Write lab report on Friday, practice vocabulary for 30 minutes."></textarea>
+    <div class="mt-2 flex items-center justify-end">
+      <button id="aiSend"
+        class="h-9 w-9 rounded-full bg-roseglass-400 text-white shadow-glass flex items-center justify-center"
+        title="Send">
+        <span style="transform: rotate(-90deg); display: inline-block;">➤</span>
+      </button>
+    </div>
+
+    <div class="mt-3 grid grid-cols-2 gap-2">
+      <button id="aiToTasks" class="rounded-2xl bg-roseglass-400 text-white px-3 py-2 shadow-glass hover:brightness-105">✨ Turn into tasks</button>
+      <button id="aiSummarize" class="rounded-2xl border border-rose-200 px-3 py-2 hover:bg-white">🧁 Summary of the day</button>
+      <button id="aiAutotag" class="rounded-2xl border border-rose-200 px-3 py-2 hover:bg-white">🏷️ Auto-tag & prioritize</button>
+      <button id="aiPolish" class="rounded-2xl border border-rose-200 px-3 py-2 hover:bg-white">💗 Polish Reflection</button>
+    </div>
+
+    <div class="ai-sep my-3"></div>
+
+    <div class="text-xs text-rose-700/70">
+      Tip: For each task, click <span class="font-bold">✨ Plan</span> to let AI split it into small steps (write it in Notes).
+    </div>
+  </div>
+</div>
+  </main>
+
+  <footer class="mx-auto max-w-6xl px-6 pb-10 text-center text-xs text-rose-700/70">Pro‑tip: tiny tasks, tiny wins. Weirdly satisfying.</footer>
+
+<script>
+// ===== Utilities =====
+function toLocalISO(date) {
+  const d = new Date(date);
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+const $ = (s)=>document.querySelector(s); const $$=(s)=>Array.from(document.querySelectorAll(s));
+const tabs=['tasks','garden','timer','quotes'];
+function showTab(name){
+  tabs.forEach(t=>{const el=$('#tab-'+t); if(!el) return; (t===name)?el.classList.remove('hidden'):el.classList.add('hidden');});
+  $$('.navBtn').forEach(b=> b.dataset.active = (b.dataset.tab===name));
+  if(name==='tasks') render();
+  if(name==='garden') updateGarden();
+  if(name==='timer') syncInputsFromRemaining();
+}
+$$('.navBtn').forEach(btn=> btn.addEventListener('click',()=> showTab(btn.dataset.tab)));
+const debounce = (fn, wait=500) => {
+  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+};
+// ========== Mobile hamburger sheet ==========
+const menuBtn     = $('#menuBtn');
+const mobileSheet = $('#mobileSheet');
+const sheetPanel  = $('#sheetPanel');
+const sheetOverlay= $('#sheetOverlay');
+const sheetClose  = $('#sheetClose');
+
+function openSheet(){
+  // hiện lớp phủ
+  mobileSheet.classList.remove('hidden');
+  // chờ 1 frame để CSS transition hoạt động
+  requestAnimationFrame(()=> sheetPanel.classList.remove('translate-x-full'));
+}
+function closeSheet(){
+  // đẩy panel ra ngoài trước
+  sheetPanel.classList.add('translate-x-full');
+  // khi transition xong mới ẩn hẳn overlay
+  sheetPanel.addEventListener('transitionend', ()=> {
+    mobileSheet.classList.add('hidden');
+  }, { once:true });
+}
+
+menuBtn?.addEventListener('click', openSheet);
+sheetOverlay?.addEventListener('click', closeSheet);
+sheetClose?.addEventListener('click', closeSheet);
+// bấm vào các item trong sheet thì chuyển tab + đóng sheet
+$$('.mobileTabBtn').forEach(b => b.addEventListener('click', () => {
+  showTab(b.dataset.tab);
+  closeSheet();
+}));
+
+// ===== Core state for Tasks =====
+const STORAGE_KEY='weird-productivity-nobuild-v3';
+const todayISO=()=> toLocalISO(new Date());
+function startOfMonth(d){d=new Date(d);return new Date(d.getFullYear(),d.getMonth(),1)}
+function endOfMonth(d){d=new Date(d);return new Date(d.getFullYear(),d.getMonth()+1,0)}
+function addDays(date,days){const d=new Date(date);d.setDate(d.getDate()+days);return d}
+function fmtMonth(d){return new Intl.DateTimeFormat(undefined,{month:'long',year:'numeric'}).format(new Date(d))}
+function fmtDayLong(d){return new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric'}).format(new Date(d))}
+function id(){return Math.random().toString(36).slice(2,9)}
+function prioLabel(p){return p==3?'spicy':p==2?'normal':'chill'}
+let state=loadState(); let selectedDate=todayISO(); let bar,pie;
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      s.reflections     = s.reflections     || {}; // key = 'YYYY-MM-DD'
+      s.weekReflections = s.weekReflections || {}; // key = 'YYYY-MM-DD' (thứ Hai đầu tuần)
+      return s;
+    }
+  }catch(e){}
+  return { tasks: demoTasks(), reflections:{}, weekReflections:{} };
+}
+async function saveState(){
+  try{
+    // gắn mốc thời gian local để so sánh với Cloud
+    state.updatedAt = Date.now();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){}
+  const uid = window.__MUSE_UID__;
+  if (!uid) return; // chưa đăng nhập thì tạm lưu local, đăng nhập xong sẽ sync
+  window.dispatchEvent(new CustomEvent("muse:requestSave", { detail: state }));
+}
+function demoTasks(){const t=new Date();t.setHours(0,0,0,0);const iso=(d)=>{ d.setHours(0,0,0,0); return toLocalISO(d); };const y1=new Date(t);y1.setDate(t.getDate()-1);const y2=new Date(t);y2.setDate(t.getDate()-2);return[
+  
+{id:id(),title:'Morning stretch & water',date:iso(y2),done:true,priority:1},
+{id:id(),title:'Write 3 lines of journal',date:iso(y2),done:true,priority:2},
+{id:id(),title:'Read 10 pages',date:iso(y1),done:true,priority:2},
+{id:id(),title:'Email follow-ups (Greental)',date:iso(y1),done:false,priority:3},
+{id:id(),title:'HEXACO intro draft',date:iso(t),done:false,priority:3},
+{id:id(),title:'Placement logbook review',date:iso(t),done:false,priority:2},
+{id:id(),title:'Walk 15 minutes',date:iso(t),done:false,priority:1},]}
+function tasksFor(date){return state.tasks.filter(t=>t.date===date)}
+function groupByDate(tasks){const m=new Map();tasks.forEach(t=>{if(!m.has(t.date))m.set(t.date,[]);m.get(t.date).push(t)});return m}
+function computeMonthStats(monthDate){const start=startOfMonth(monthDate),end=endOfMonth(monthDate);const arr=state.tasks.filter(t=>new Date(t.date)>=start&&new Date(t.date)<=end);const map=groupByDate(arr);let total=0,done=0;const daily=[];for(let d=new Date(start);d<=end;d=addDays(d,1)){const iso=toLocalISO(d);const list=map.get(iso)||[];const dt=list.length;const dd=list.filter(x=>x.done).length;total+=dt;done+=dd;daily.push({iso,total:dt,done:dd})}const completion=total?Math.round(done/total*100):0;return{total,done,completion,daily}}
+function computeStreak(){const map=groupByDate(state.tasks);let streak=0;let d=new Date();d.setHours(0,0,0,0);while(true){const iso=toLocalISO(d);const list=map.get(iso)||[];if(list.some(t=>t.done)){streak++;d=addDays(d,-1)}else break}return streak}
+function render(){
+  $('#monthLabel').textContent=fmtMonth(selectedDate); $('#statsMonth').textContent=fmtMonth(selectedDate); $('#dayLabel').textContent=fmtDayLong(selectedDate);
+  const start=startOfMonth(selectedDate), end=endOfMonth(selectedDate); const first=start.getDay(); const wrap=$('#calendarGrid'); wrap.innerHTML=''; for(let i=0;i<first;i++){const s=document.createElement('div'); s.className='opacity-50'; wrap.appendChild(s)}
+  const stats=computeMonthStats(selectedDate); stats.daily.forEach((d)=>{const btn=document.createElement('button');btn.className='relative aspect-square rounded-2xl p-2 text-left transition hover:bg-white/60 '+(d.iso===selectedDate?'bg-white/80 ring-2 ring-roseglass-300':'');btn.innerHTML=`<div class="flex h-full flex-col justify-between"><div class="flex items-center justify-between"><span class="text-sm font-semibold">${new Date(d.iso).getDate().toString().padStart(2,'0')}</span>${d.total>0?`<span class=\"block h-6 w-6 rounded-full border-2 border-pink-200 relative\"><span class=\"absolute inset-0 rounded-full\" style=\"box-shadow: inset 0 0 0 9999px rgba(251,113,133,${(d.done/d.total).toFixed(2)})\"></span></span>`:''}</div><div class="text-[10px] text-rose-700/70">${d.total>0?Math.round(d.done/d.total*100)+'%':''}</div></div>`;btn.addEventListener('click',()=>{selectedDate=d.iso;render()});wrap.appendChild(btn)});
+  $('#monthCompletion').textContent=stats.completion+'%'; $('#monthBar').style.width=stats.completion+'%'; $('#doneCount').textContent=stats.done; $('#totalCount').textContent=stats.total; const streak=computeStreak(); $('#streakCount').textContent=streak+'🔥'; $('#streakText').textContent=streak+' days'; $('#miniDone').textContent=stats.done; $('#miniTotal').textContent=stats.total;
+  const list=tasksFor(selectedDate); const ul=$('#taskList'); ul.innerHTML=''; if(list.length===0)$('#emptyMsg').classList.remove('hidden'); else $('#emptyMsg').classList.add('hidden'); 
+  list.forEach(t => {
+  const li = document.createElement('li');
+  li.className = 'group rounded-2xl bg-white/70 p-3 ring-1 ring-white/60 hover:ring-roseglass-300'; 
+  li.innerHTML=`
+  <div class="flex items-start gap-3">
+    <button class="toggleBtn mt-1 inline-flex h-6 w-6 shrink-0 aspect-square items-center justify-center rounded-full border 
+    ${t.done?'bg-roseglass-400 text-white border-roseglass-400' : 'border-roseglass-300 bg-white'}">
+    ${t.done?'✓':''}
+    </button>
+    <div class="flex-1 min-w-0">
+      <div contenteditable="true"
+        class="taskTitle text-sm md:text-base ${t.done?'line-through opacity-60':''}">
+      ${t.title}
+      </div>
+      ${t.notes?`<div class="mt-1 text-xs text-rose-700/80 break-words">${t.notes}</div>`:''}
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-[10px]">
+        <span class="rounded-full px-2 py-0.5
+          ${t.priority==3?'bg-rose-200 text-rose-900':t.priority==2?'bg-pink-100 text-pink-900':'bg-fuchsia-100 text-fuchsia-900'}">
+          priority: ${prioLabel(t.priority)}
+          </span>
+          ${t.status ? `<span class="rounded-full bg-white/70 ring-1 ring-white/50 px-2 py-0.5">${t.status}</span>` : ''}
+          ${(t.tags||[]).map(tag =>
+           `<span class="rounded-full bg-white/70 ring-1 ring-white/50 px-2 py-0.5">#${tag}</span>`
+          ).join('')}
+          ${t.done?'<span class="rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700\">completed</span>':''}
+          </div>
+        </div>
+        <div class ="opacity-0 transition group-hover:opacity-100 flex gap-1">
+          <button class="editBtn text-roseglass-500" title="Edit">✎</button>
+          <button class="delBtn  text-roseglass-500" title="Delete">🗑</button>
+        </div>
+      </div>
+    `; 
+  const toggleBtn = li.querySelector('.toggleBtn');
+  const titleDiv  = li.querySelector('.taskTitle');
+  const delBtn    = li.querySelector('.delBtn');
+  const editBtn   = li.querySelector('.editBtn');
+
+  toggleBtn.addEventListener('click', () => {
+    t.done = !t.done; saveState(); render();
+  });
+
+  titleDiv.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); titleDiv.blur(); }
+  });
+  titleDiv.addEventListener('blur', () => {
+    const v = titleDiv.textContent.trim();
+    if (v) t.title = v;
+    saveState(); render();
+  });
+
+  delBtn.addEventListener('click', () => {
+    state.tasks = state.tasks.filter(x => x.id !== t.id);
+    saveState(); render();
+  });
+
+  editBtn.addEventListener('click', () => openEditModal(t));
+
+  ul.appendChild(li);
+});
+  const done=list.filter(x=>x.done).length; const total=list.length; const pct=total?Math.round(done/total*100):0; $('#dayCompletion').textContent=pct+'%'; $('#vibe').textContent=pct===100?'Blossoming':(pct>=60?'Rosy':(pct>0?'Petal':'Seed'));
+  const labels=stats.daily.map(d=>new Date(d.iso).getDate()); const totalArr=stats.daily.map(d=>d.total); const doneArr=stats.daily.map(d=>d.done); const barCtx=$('#barChart').getContext('2d'); if(bar) bar.destroy(); bar=new Chart(barCtx,{type:'bar',data:{labels,datasets:[{label:'Total',data:totalArr},{label:'Completed',data:doneArr}]},options:{responsive:true,plugins:{legend:{display:true}},scales:{y:{beginAtZero:true}}}}); const pieCtx=$('#pieChart').getContext('2d'); if(pie) pie.destroy(); pie=new Chart(pieCtx,{type:'pie',data:{labels:['Done','Remaining'],datasets:[{data:[stats.done,Math.max(stats.total-stats.done,0)]}]}});
+  $('#mm60').className=(pct>=60?'line-through opacity-60':''); $('#mm100').className=(pct===100?'line-through opacity-60':''); $('#mm50m').className=(stats.completion>=50?'line-through opacity-60':'');
+  const rEl = document.getElementById('dailyReflection');
+  if (rEl) {
+    rEl.value = (state.reflections || {})[selectedDate] || '';
+    rEl.oninput = debounce(() => {
+      const v = rEl.value.trim();
+      state.reflections = state.reflections || {};
+      if (v) state.reflections[selectedDate] = v;
+      else   delete state.reflections[selectedDate];
+      saveState();
+      const tick = document.getElementById('reflectSaved');
+      if (tick) { tick.style.opacity = '1'; setTimeout(()=> tick.style.opacity='0', 800); }
+    }, 500);
+  }
+  if (!$('#tab-garden').classList.contains('hidden')) updateGarden();
+}
+
+// ===== Edit Modal wiring =====
+let __editingId = null;
+
+function openEditModal(task) {
+  __editingId = task.id;
+  $('#eTitle').value  = task.title || '';
+  $('#eDate').value   = task.date  || toLocalISO(new Date());
+  $('#eStatus').value = task.status || '';
+  $('#eTags').value   = (task.tags || []).join(', ');
+  $('#eNotes').value  = task.notes || '';
+  $('#editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  __editingId = null;
+  $('#editModal').classList.add('hidden');
+}
+
+$('#editOverlay')?.addEventListener('click', closeEditModal);
+$('#editClose')?.addEventListener('click', closeEditModal);
+
+$('#editSave')?.addEventListener('click', () => {
+  if (!__editingId) return;
+  const t = state.tasks.find(x => x.id === __editingId);
+  if (!t) return;
+
+  t.title  = $('#eTitle').value.trim() || t.title;
+  t.date   = $('#eDate').value || t.date;
+  t.status = $('#eStatus').value.trim() || '';
+  t.tags   = ($('#eTags').value || '')
+              .split(',')
+              .map(s => s.trim())
+              .filter(Boolean);
+  t.notes  = $('#eNotes').value.trim() || null;
+
+  saveState();
+  closeEditModal();
+  // nếu bạn đang ở ngày khác, chuyển về đúng ngày mới sửa?
+  // selectedDate = t.date;
+  render();
+});
+
+$('#prevMonth').addEventListener('click',()=>{
+  const d=new Date(selectedDate);
+  d.setMonth(d.getMonth()-1);
+  selectedDate=toLocalISO(
+    new Date(d.getFullYear(), d.getMonth(),
+      Math.min(new Date(selectedDate).getDate(), endOfMonth(d).getDate())
+    )
+  );   
+  // local ISO
+  render();
+});
+$('#nextMonth').addEventListener('click',()=>{
+  const d=new Date(selectedDate);
+  d.setMonth(d.getMonth()+1);
+  selectedDate=toLocalISO(
+    new Date(d.getFullYear(), d.getMonth(),
+      Math.min(new Date(selectedDate).getDate(), endOfMonth(d).getDate())
+    )
+  );   
+  render();
+});
+$('#todayBtn').addEventListener('click',()=>{selectedDate=todayISO(); render()});
+$('#addBtn').addEventListener('click', addTask);
+$('#newTitle').addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.preventDefault();addTask()}});
+function addTask(){
+  const titleInput=$('#newTitle').value.trim();
+  const noteInput=$('#newNote').value.trim();
+  const prio=parseInt($('#newPrio').value||'2');
+  const tagValue   = ($('#newTag')?.value || '').trim();
+  const title=titleInput||(noteInput?noteInput.slice(0,60):'');
+  if(!title) return;
+
+  state.tasks.unshift({
+    id:id(),
+    title,
+    date:selectedDate,
+    done:false,
+    priority:prio,
+    notes:noteInput||null,
+    status:'todo',      
+    tags: tagValue ? [tagValue] : []            
+  });
+
+  $('#newTitle').value=''; $('#newNote').value=''; $('#newPrio').value='2'; if ($('#newTag')) $('#newTag').value = '';
+  saveState(); render();
+}
+
+// ===== Garden =====
+function seedRng(seedStr){let h=2166136261>>>0; for(let i=0;i<seedStr.length;i++){h^=seedStr.charCodeAt(i); h=Math.imul(h,16777619);} return ()=>{h+=0x6D2B79F5; let t=Math.imul(h^(h>>>15),1|h); t^=t+Math.imul(t^(t>>>7),61|t); return((t^(t>>>14))>>>0)/4294967296};}
+function flowerTier(doneCount){ if(doneCount>=7) return 'lg'; if(doneCount>=5) return 'md'; if(doneCount>=2) return 'sm'; return 'sm'; }
+function flowerSVG(kind,c1,c2){ if(kind==='tulip')return`<svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg"><rect x="38" y="55" width="4" height="55" rx="2" fill="#16a34a"/><path d="M10 80 C25 70, 30 70, 40 78" stroke="#16a34a" stroke-width="4" fill="none"/><path d="M70 80 C55 70, 50 70, 40 78" stroke="#16a34a" stroke-width="4" fill="none"/><path d="M40 55 C60 55, 66 40, 62 25 C54 35, 47 25, 40 18 C33 25, 26 35, 18 25 C14 40, 20 55, 40 55Z" fill="${c1}" stroke="${c2}" stroke-width="2"/></svg>`; if(kind==='peony')return`<svg width="96" height="126" viewBox="0 0 96 126" xmlns="http://www.w3.org/2000/svg"><rect x="46" y="60" width="4" height="60" rx="2" fill="#15803d"/><circle cx="48" cy="50" r="24" fill="${c1}"/><circle cx="40" cy="48" r="20" fill="${c1}"/><circle cx="56" cy="48" r="20" fill="${c1}"/><circle cx="48" cy="50" r="10" fill="${c2}"/></svg>`; return`<svg width="72" height="120" viewBox="0 0 72 120" xmlns="http://www.w3.org/2000/svg"><rect x="34" y="58" width="4" height="58" rx="2" fill="#16a34a"/><g transform="translate(36 46)"><circle r="8" fill="${c2}"/>${Array.from({length:12}).map((_,i)=>{const a=(i*30)*Math.PI/180; const x=Math.cos(a)*16, y=Math.sin(a)*16; return `<ellipse cx="${x}" cy="${y}" rx="7" ry="14" fill="${c1}" />`}).join('')}</g></svg>`; }
+function createFlowerEl(kind,tier,leftPct,topPct,rotDeg){const wrap=document.createElement('div'); wrap.className=`flower ${tier}`; wrap.style.left=leftPct+'%'; wrap.style.top=topPct+'%'; wrap.style.setProperty('--rot',rotDeg+'deg'); const colors={daisy:['#fde68a','#f59e0b'], tulip:['#fb7185','#f43f5e'], peony:['#fda4af','#fecdd3']}; wrap.innerHTML=flowerSVG(kind,colors[kind][0],colors[kind][1]); return wrap;}
+function updateGarden(){const canvas=$('#gardenCanvas'); if(!canvas) return; canvas.innerHTML=''; $('#gardenMonth').textContent=fmtMonth(selectedDate); const stats=computeMonthStats(selectedDate); const todayList=tasksFor(selectedDate); const td=todayList.filter(t=>t.done).length, tt=todayList.length; $('#gardenToday').textContent= tt? `${td}/${tt} completed (${Math.round(td/tt*100)}%)` : 'No tasks today'; stats.daily.forEach(d=>{ if(d.total>0 && d.done===d.total){ const rng=seedRng(d.iso); const tier=flowerTier(d.done); const kinds=['daisy','tulip','peony']; const kind=kinds[Math.floor(rng()*kinds.length)]; const left=20+rng()*60; const top=30+rng()*55; const rot=Math.floor(rng()*20-10); canvas.appendChild(createFlowerEl(kind,tier,left,top,rot)); } }); }
+
+// ===== Timer =====
+let tRemaining=25*60; let tId=null;
+function formatTime(s){const m=Math.floor(s/60).toString().padStart(2,'0'); const sec=Math.floor(s%60).toString().padStart(2,'0'); return `${m}:${sec}`}
+function syncInputsFromRemaining(){const m=Math.floor(tRemaining/60); const s=tRemaining%60; $('#tMin') && ($('#tMin').value=m); $('#tSec') && ($('#tSec').value=s.toString().padStart(2,'0')); $('#tDisplay') && ($('#tDisplay').textContent=formatTime(tRemaining));}
+function readInputsToRemaining(){const m=parseInt($('#tMin').value||'0',10); const s=parseInt($('#tSec').value||'0',10); tRemaining=Math.max(0,m*60+Math.min(59,s)); $('#restBanner')?.classList.add('hidden'); $('#tDisplay').textContent=formatTime(tRemaining);}
+function playBeep(){const ctx=new (window.AudioContext||window.webkitAudioContext)(); const o=ctx.createOscillator(); const g=ctx.createGain(); o.type='sine'; o.frequency.value=880; o.connect(g); g.connect(ctx.destination); g.gain.setValueAtTime(0.001,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.2,ctx.currentTime+0.02); o.start(); setTimeout(()=>{g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.25); o.stop(ctx.currentTime+0.3);},250);} 
+function onTimerEnd(){
+  playBeep();
+  $('#restBanner')?.classList.remove('hidden');
+  notify('Time’s up!', { body: 'Take a short break, honey ✨' });}
+function startTimer(){ if(tId) return; readInputsToRemaining(); if(tRemaining<=0) return; tId=setInterval(()=>{ tRemaining--; $('#tDisplay').textContent=formatTime(tRemaining); if(tRemaining<=0){ clearInterval(tId); tId=null; onTimerEnd(); } },1000);} 
+function pauseTimer(){ if(tId){clearInterval(tId); tId=null;} }
+function resetTimer(){ pauseTimer(); readInputsToRemaining(); $('#restBanner')?.classList.add('hidden'); }
+$('#tMin')?.addEventListener('change',readInputsToRemaining); $('#tSec')?.addEventListener('change',readInputsToRemaining); $('#tStart')?.addEventListener('click',startTimer); $('#tPause')?.addEventListener('click',pauseTimer); $('#tReset')?.addEventListener('click',resetTimer); $$('#tab-timer [data-preset]').forEach(b=> b.addEventListener('click',()=>{ pauseTimer(); const minutes=parseInt(b.dataset.preset,10)||0; tRemaining=minutes*60; syncInputsFromRemaining(); $('#restBanner')?.classList.add('hidden'); })); syncInputsFromRemaining();
+
+// ===== Quotes =====
+const QUOTES=['Weird is wonderful 🌸','Tiny tasks, tiny wins.','Bloom where you are planted 🌱','Your future self is applauding 👏','Its better to cry in a Lamborghini than cry in a Honda Civic', 'Whoever said money cant solve your problems? Must not have had enough money to solve them','Work smarter not harder, babe','Rich people not gonna marry dumb sh*t','If you’re lazy, someone dumber is taking your spot.','Cry now, flex later.','Excuses don’t pay bills.','You said tomorrow yesterday.','Complain less, conquer more.','Stay broke, or stay focused.','Grades don’t define you, but they decide if you eat instant noodles or steak.','Sleep is for the rich - grind is for the broke.','It’s better to be exhausted in a penthouse than relaxed in debt.','Ambition looks sexy, laziness doesn’t.','You studied 5 hours? Neighbor’s kid studied 10.','Rest when you’re rich, not when you’re tired.','Do you really want to be the failure in an Asian family?','Youre worth it! Always was, and always will be','Youre Ex is laughing at you now if youre not get youre ass up and get to work','Mind youre own business babe, dont need to care about other opinion','Things getting tough? A nap might help or you can work while soak in tears and youre future self gonna be greatful','Having a hard day? Excercise might help','Working is good but taking care of your health is crucial, excercise bro!!'];
+$('#newQuoteBtn')?.addEventListener('click',()=>{$('#quoteBox').textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)]});
+
+// ===== Init =====
+showTab('tasks');
+
+// ===== Report helpers =====
+function startOfWeek(d = new Date(), weekStartsOn = 1) {
+  const t = new Date(d); t.setHours(0,0,0,0);
+  const day = t.getDay();
+  const diff = (day - weekStartsOn + 7) % 7;
+  t.setDate(t.getDate() - diff);
+  return t;
+}
+function computeRangeStatsInclusive(start, end, sourceTasks = state.tasks) {
+  const s = new Date(start), e = new Date(end);
+  s.setHours(0,0,0,0); e.setHours(0,0,0,0);
+  const arr = sourceTasks.filter(t => {
+    const dt = new Date(t.date); dt.setHours(0,0,0,0);
+    return dt >= s && dt <= e;
+  });
+  const map = groupByDate(arr);
+  let total=0, done=0; const daily=[];
+  for (let d=new Date(s); d<=e; d=addDays(d,1)) {
+    const iso = toLocalISO(d);
+    const list = map.get(iso) || [];
+    const dt = list.length;
+    const dd = list.filter(x=>x.done).length;
+    total += dt; done += dd;
+    daily.push({ iso, total: dt, done: dd });
+  }
+  const completion = total ? Math.round(done/total*100) : 0;
+  return { total, done, completion, daily };
+}
+
+// open/close modal
+let weekChartInst, monthChartInst;
+function allExistingTags(){
+  const s = new Set();
+  (state.tasks || []).forEach(t => (t.tags || []).forEach(tag => tag && s.add(tag)));
+  return Array.from(s).sort(); // ví dụ: ["personal","study","work","youtube",...]
+}
+
+function buildReportTagOptions(){
+  const sel = document.getElementById('reportTagFilter');
+  if (!sel) return;
+  const prev = sel.value || '';
+
+  const tags = allExistingTags();
+  sel.innerHTML = `<option value="">All</option>` +
+                  tags.map(t => `<option value="${t}">${t[0].toUpperCase()+t.slice(1)}</option>`).join('');
+
+  // giữ lại lựa chọn trước nếu còn tồn tại
+  if (prev && tags.includes(prev)) sel.value = prev;
+}
+
+function renderReport(){
+  const tag = document.getElementById('reportTagFilter')?.value || '';
+
+  // chọn nguồn dữ liệu theo tag
+  const source = tag ? state.tasks.filter(t => (t.tags || []).includes(tag)) : state.tasks;
+
+  // ----- TUẦN HIỆN TẠI -----
+  const wStart = startOfWeek(new Date());
+  const wEnd   = new Date(); wEnd.setHours(0,0,0,0);
+  const wStats = computeRangeStatsInclusive(wStart, wEnd, source);
+
+  // ----- TUẦN TRƯỚC -----
+  const prevStart = addDays(wStart, -7);
+  const prevEnd   = addDays(wEnd, -7);
+  const prevStats = computeRangeStatsInclusive(prevStart, prevEnd, source);
+
+  const diffPct = prevStats.completion
+    ? Math.round(((wStats.completion - prevStats.completion) / prevStats.completion) * 100)
+    : 0;
+
+  // Nhãn tuần + trend
+  const weekLabel = document.getElementById('weekLabel');
+  weekLabel.innerHTML =
+    `This week (${toLocalISO(wStart)} → ${toLocalISO(wEnd)})<br>
+     <span class="text-xs font-semibold ${diffPct >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+       ${diffPct >= 0 ? '↑' : '↓'} ${Math.abs(diffPct)}% vs last week
+     </span>`;
+
+  // Số liệu tuần
+  document.getElementById('weekPct').textContent   = wStats.completion;
+  document.getElementById('weekDone').textContent  = wStats.done;
+  document.getElementById('weekTotal').textContent = wStats.total;
+
+  // ----- THÁNG HIỆN TẠI -----
+  const mStats = computeMonthStats(new Date(), source);
+  document.getElementById('monthPctRpt').textContent   = mStats.completion;
+  document.getElementById('monthDoneRpt').textContent  = mStats.done;
+  document.getElementById('monthTotalRpt').textContent = mStats.total;
+  document.getElementById('monthLabelRpt').textContent = `This month (${fmtMonth(new Date())})`;
+
+  // ----- BIỂU ĐỒ -----
+  const wLabels = wStats.daily.map(d => new Date(d.iso).toLocaleDateString(undefined,{weekday:'short'}));
+  const wDone   = wStats.daily.map(d => d.done);
+  const wTotal  = wStats.daily.map(d => d.total);
+  const mLabels = mStats.daily.map(d => new Date(d.iso).getDate());
+  const mDone   = mStats.daily.map(d => d.done);
+  const mTotal  = mStats.daily.map(d => d.total);
+  if (weekChartInst) weekChartInst.destroy();
+  if (monthChartInst) monthChartInst.destroy();
+  weekChartInst = new Chart(document.getElementById('weekChart').getContext('2d'), {
+    type: 'bar',
+    data: { labels: wLabels, datasets: [{ label:'Total', data:wTotal }, { label:'Completed', data:wDone }] },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+  monthChartInst = new Chart(document.getElementById('monthChartRpt').getContext('2d'), {
+    type: 'bar',
+    data: { labels: mLabels, datasets: [{ label:'Total', data:mTotal }, { label:'Completed', data:mDone }] },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  // ---- bind Weekly Reflection (key = thứ Hai đầu tuần) ----
+  const wKey = toLocalISO(wStart);
+  document.getElementById('weekRangeLabel').textContent =
+    `${toLocalISO(wStart)} → ${toLocalISO(wEnd)}`;
+  const wBox = document.getElementById('weekReflection');
+  if (wBox) {
+    wBox.value = (state.weekReflections || {})[wKey] || '';
+    wBox.oninput = debounce(() => {
+      const v = wBox.value.trim();
+      state.weekReflections = state.weekReflections || {};
+      if (v) state.weekReflections[wKey] = v;
+      else   delete state.weekReflections[wKey];
+      saveState();
+      const tick = document.getElementById('weekReflectSaved');
+      if (tick) { tick.style.opacity = '1'; setTimeout(()=> tick.style.opacity='0', 800); }
+    }, 500);
+  }
+}
+
+function openReportModal(){
+  // mở modal
+  document.getElementById('reportModal').classList.remove('hidden');
+
+  // build dropdown tag theo dữ liệu hiện có
+  buildReportTagOptions();
+
+  // render số liệu + chart lần đầu
+  renderReport();
+
+  // thay đổi tag thì render lại (gắn 1 lần)
+  const sel = document.getElementById('reportTagFilter');
+  if (sel && !sel._bound) {
+    sel.addEventListener('change', renderReport);
+    sel._bound = true;
+  }
+}
+function closeReportModal() {
+  $('#reportModal').classList.add('hidden');
+}
+
+// ===== Export CSV (Weekly + Monthly) =====
+function csvEsc(s){
+  if (s == null) return '""';
+  s = String(s).replace(/"/g,'""').replace(/\r?\n/g, ' ');
+  return `"${s}"`;
+}
+function isBetweenISO(iso, startDate, endDate){
+  const d = new Date(iso); d.setHours(0,0,0,0);
+  const s = new Date(startDate); s.setHours(0,0,0,0);
+  const e = new Date(endDate);   e.setHours(0,0,0,0);
+  return d >= s && d <= e;
+}
+function exportCSVFromReport(){
+  // Ranges
+  const wStart = startOfWeek(new Date());
+  const wEnd   = new Date(); wEnd.setHours(0,0,0,0);
+  const mStart = startOfMonth(new Date());
+  const mEnd   = endOfMonth(new Date());
+  const selectedTag = document.getElementById('reportTagFilter')?.value || '';
+  const source = selectedTag ? state.tasks.filter(t => (t.tags || []).includes(selectedTag)) : state.tasks;
+
+  // Stats
+  const wStats = computeRangeStatsInclusive(wStart, wEnd);
+  const mStats = computeRangeStatsInclusive(mStart, mEnd);
+
+  const lines = [];
+
+  // Weekly summary
+  lines.push('Weekly Summary');
+  lines.push('Date,Total,Done,Completion%');
+  wStats.daily.forEach(d=>{
+    const pct = d.total ? Math.round(d.done/d.total*100) : 0;
+    lines.push(`${d.iso},${d.total},${d.done},${pct}`);
+  });
+  lines.push('');
+
+  // Monthly summary
+  lines.push('Monthly Summary');
+  lines.push('Date,Total,Done,Completion%');
+  mStats.daily.forEach(d=>{
+    const pct = d.total ? Math.round(d.done/d.total*100) : 0;
+    lines.push(`${d.iso},${d.total},${d.done},${pct}`);
+  });
+  lines.push('');
+
+  // Weekly tasks (raw)
+  const weeklyTasks = state.tasks.filter(t => isBetweenISO(t.date, wStart, wEnd));
+  lines.push('Weekly Tasks');
+  lines.push('Date,Title,Done,Priority,Notes');
+  weeklyTasks.forEach(t=>{
+    lines.push([
+      t.date,
+      csvEsc(t.title),
+      t.done ? 1 : 0,
+      t.priority ?? '',
+      csvEsc(t.notes || '')
+    ].join(','));
+  });
+  lines.push('');
+
+  // Monthly tasks (raw)
+  const monthlyTasks = state.tasks.filter(t => isBetweenISO(t.date, mStart, mEnd));
+  lines.push('Monthly Tasks');
+  lines.push('Date,Title,Done,Priority,Notes');
+  monthlyTasks.forEach(t=>{
+    lines.push([
+      t.date,
+      csvEsc(t.title),
+      t.done ? 1 : 0,
+      t.priority ?? '',
+      csvEsc(t.notes || '')
+    ].join(','));
+  });
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `muse-report-${toLocalISO(new Date())}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+
+// Bind export btn
+$('#exportCSVBtn')?.addEventListener('click', exportCSVFromReport);
+
+// bind buttons
+$('#reportBtn')?.addEventListener('click', openReportModal);
+$('#reportOverlay')?.addEventListener('click', closeReportModal);
+$('#reportClose')?.addEventListener('click', closeReportModal);
+
+</script>
+
+<script type="module">
+  // ---- Firebase SDKs ----
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDYguh3q6kSKHMQIlx1_M6Kc2N28N7Sio",
+    authDomain: "musedo-b6a21.firebaseapp.com",
+    projectId: "musedo-b6a21",
+    storageBucket: "musedo-b6a21.appspot.com",
+    messagingSenderId: "840299933623",
+    appId: "1:840299933623:web:c01ac0b487d37358d08232",
+    measurementId: "G-1K2X7XQ9DQ"
+  };
+
+  // ---- Init ----
+  const app  = initializeApp(firebaseConfig);
+  const db   = getFirestore(app);
+  const auth = getAuth(app);
+  window.__MUSE_UID__ = null;
+
+// ---- Map UI (desktop + mobile) ----
+const statusEls     = [document.getElementById('authStatus'),  document.getElementById('authStatusM')].filter(Boolean);
+const btnGoogleEls  = [document.getElementById('btnGoogle'),   document.getElementById('btnGoogleM')].filter(Boolean);
+const btnSignOutEls = [document.getElementById('btnSignOut'),  document.getElementById('btnSignOutM')].filter(Boolean);
+
+// Chỉ LÀM NHIỆM VỤ toggle UI, KHÔNG gắn click ở đây
+function applyAuthUI({ signedIn, name }) {
+  statusEls.forEach(el => el && (el.textContent = signedIn ? `Signed in (${name})` : 'Not signed in'));
+  btnGoogleEls.forEach(el => el && el.classList.toggle('hidden', signedIn));
+  btnSignOutEls.forEach(el => el && el.classList.toggle('hidden', !signedIn));
+}
+
+// Gắn click MỘT LẦN (đừng gắn lặp ở nơi khác)
+btnGoogleEls.forEach(btn => btn.addEventListener('click', async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' }); // ép hiện chọn tài khoản
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    alert('Google sign-in failed: ' + (e?.message || e));
+    console.error(e);
+  }
+}));
+btnSignOutEls.forEach(btn => btn.addEventListener('click', () => signOut(auth)));
+
+  // ---- Lắng nghe sự kiện save từ code Tasks và ghi Firestore ----
+  window.addEventListener('muse:requestSave', async (e) => {
+    const uid = window.__MUSE_UID__;
+    if (!uid) return; // chưa đăng nhập thì bỏ qua (đã lưu local trong saveState)
+    try {
+      const ref = doc(db, 'users', uid);
+      const cleaned = JSON.parse(JSON.stringify(e.detail));
+      const payload = { ...cleaned, updatedAt: serverTimestamp() };
+      await setDoc(ref, payload, { merge: true });
+    } catch (err) {
+      console.error('setDoc failed', err);
+      alert('Không lưu được lên Cloud: ' + (err?.message || err));
+    }
+  });
+
+  // ---- Khi trạng thái đăng nhập thay đổi ----
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.__MUSE_UID__ = null;
+      applyAuthUI({ signedIn: false });
+      return;
+    }
+    window.__MUSE_UID__ = user.uid;
+    applyAuthUI(true, user.displayName || 'Google'); 
+
+    // Đang đăng nhập
+    window.__MUSE_UID__ = user.uid;
+    applyAuthUI({ signedIn: true, name: user.displayName || 'Google' });
+
+    const ref = doc(db, 'users', user.uid);
+
+    // Lấy cloud + local để hòa giải
+    const snap = await getDoc(ref);
+    const cloud = snap.exists() ? snap.data() : null;
+    const localRaw = localStorage.getItem('weird-productivity-nobuild-v3');
+    const local = localRaw ? JSON.parse(localRaw) : null;
+
+    const cloudTime = cloud?.updatedAt?.toMillis?.() ?? 0; // Firestore Timestamp -> ms
+    const localTime = local?.updatedAt ?? 0;               // ms do ta set ở saveState()
+
+    if (!cloud && local) {
+      // Cloud chưa có -> đẩy local lên
+      await setDoc(ref, { ...local, updatedAt: serverTimestamp() }, { merge: true });
+    } else if (cloud && (!local || cloudTime >= localTime)) {
+      // Cloud mới hơn -> kéo cloud về local + UI
+      try { localStorage.setItem('weird-productivity-nobuild-v3', JSON.stringify(cloud)); } catch {}
+      if (window.state && cloud.tasks) { window.state = cloud; window.render?.(); }
+    } else if (local && localTime > cloudTime) {
+      // Local mới hơn -> đẩy lên cloud
+      await setDoc(ref, { ...local, updatedAt: serverTimestamp() }, { merge: true });
+    }
+
+    // Nghe realtime để đồng bộ chéo thiết bị
+    onSnapshot(ref, (s) => {
+      const data = s.data();
+      if (!data) return;
+      try { localStorage.setItem('weird-productivity-nobuild-v3', JSON.stringify(data)); } catch {}
+      if (window.state && data.tasks) { window.state = data; window.render?.(); }
+    }, (err) => {
+      console.error('onSnapshot error', err);
+    });
+  });
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/musedo/sw.js')
+        .then(reg => console.log('✅ Service worker registered:', reg.scope))
+        .catch(err => console.error('❌ SW registration failed:', err));
+    });
+  }
+</script>
+<script>
+  // Hiện nút cài khi đủ điều kiện PWA
+  let deferredPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('btnInstall')?.classList.remove('hidden');
+    document.getElementById('btnInstallM')?.classList.remove('hidden');
+  });
+
+  async function doInstall() {
+    if (!deferredPrompt) { 
+      alert('If you do not see the button, use browser menu → Install app.');
+      return;
+    }
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;  // { outcome: 'accepted' | 'dismissed' }
+    deferredPrompt = null;
+    document.getElementById('btnInstall')?.classList.add('hidden');
+    document.getElementById('btnInstallM')?.classList.add('hidden');
+  }
+
+  document.getElementById('btnInstall')?.addEventListener('click', doInstall);
+  document.getElementById('btnInstallM')?.addEventListener('click', doInstall);
+
+  // Ẩn nút sau khi đã cài
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('btnInstall')?.classList.add('hidden');
+    document.getElementById('btnInstallM')?.classList.add('hidden');
+    console.log('PWA installed');
+  });
+</script>
+<script>
+// Xin quyền (gọi 1 lần ở phiên đầu)
+async function ensureNotificationPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') return false;
+  const perm = await Notification.requestPermission();
+  return perm === 'granted';
+}
+
+// Gửi thông báo (ưu tiên service worker để hiện cả khi PWA chạy nền)
+async function notify(title, options = {}) {
+  try {
+    if (!(await ensureNotificationPermission())) return;
+
+    // Nếu có SW, dùng showNotification
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration('/musedo/');
+      if (reg && reg.showNotification) {
+        return reg.showNotification(title, {
+          body: options.body,
+          icon: '/musedo/Asset/icon-192.png',
+          badge: '/musedo/Asset/icon-192.png',
+          vibrate: [100, 50, 100],
+          tag: options.tag || 'musedo',
+          data: options.data || {},
+        });
+      }
+    }
+    // Fallback: Notification API trực tiếp
+    new Notification(title, {
+      body: options.body,
+      icon: '/musedo/Asset/icon-192.png'
+    });
+  } catch (e) {
+    console.warn('notify error', e);
+  }
+}
+
+// Gợi ý quyền sau khi người dùng có thao tác (tránh xin quyền ngay khi vào trang)
+document.addEventListener('click', () => {
+  ensureNotificationPermission(); // gọi nhẹ nhàng 1 lần sau tương tác
+}, { once: true });
+</script>
+<script>
+// Nhắc sau mỗi ~6h nếu hôm nay chưa có task done
+(function lightDailyNudge(){
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+  function shouldNudge() {
+    try {
+      const state = JSON.parse(localStorage.getItem('weird-productivity-nobuild-v3')||'{}');
+      const todayISO = new Date().toISOString().slice(0,10);
+      const done = (state.tasks||[]).filter(t => t.date === todayISO && t.done).length;
+      return done === 0;
+    } catch { return false; }
+  }
+  setTimeout(async () => {
+    if (shouldNudge()) {
+      await notify('One tiny win today?', { body: 'Mark 1 task done to keep the streak 🔥' });
+    }
+  }, 10 * 1000); // nhắc nhẹ sau 10s mở app
+  setInterval(async () => {
+    if (shouldNudge()) {
+      await notify('Tiny check-in ✨', { body: 'Complete any 1 task today!' });
+    }
+  }, SIX_HOURS);
+})();
+</script>
+
+<script>
+/* CẤU HÌNH PROXY AI */
+const AI_PROXY_URL = "https://muse-ai.kimphungphuc.workers.dev/ai";
+
+/* --- helper gọi AI qua proxy (OpenAI-compatible) --- */
+async function callAI(messages, {json=false, temperature=0.4}={}) {
+  try{
+    const res = await fetch(AI_PROXY_URL, {
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body: JSON.stringify({ messages, json, temperature })
+    });
+    const data = await res.json();
+    return data.text || "";            // worker trả { text }
+  }catch(e){
+    alert("AI error: " + (e?.message || e));
+    return "";
+  }
+}
+
+/* ---------- UI open/close panel ---------- */
+const aiFab   = document.getElementById('aiFab');
+const aiPanel = document.getElementById('aiPanel');
+const aiClose = document.getElementById('aiClose');
+aiFab?.addEventListener('click', ()=> aiPanel.classList.toggle('hidden'));
+aiClose?.addEventListener('click', ()=> aiPanel.classList.add('hidden'));
+
+/* ---------- Các hành động AI ---------- */
+async function ai_text_to_tasks() {
+  const raw = (document.getElementById('aiInput').value || "").trim();
+  if (!raw) { alert("Hãy nhập mô tả/ghi chú để tạo tasks ✨"); return; }
+  const today = toLocalISO(new Date());
+
+  const sys = { role:'system', content:
+`You turn casual notes into to-do items for a personal task app.
+Return STRICT JSON: {"tasks":[{ "title":string, "date": "YYYY-MM-DD", "priority":1|2|3, "tags":string[], "notes":string? }]}.
+- If input has relative time like "tomorrow", compute from TODAY provided by user.
+- Keep titles short & actionable. Priority: 1=chill, 2=normal, 3=spicy.
+- Tags are lowercase single words (like "work","study","personal").`};
+
+  const usr = { role:'user', content:
+    `TODAY = ${today}
+    Text:
+    ${raw}`};
+
+  const txt = await callAI([sys, usr], { json:true, temperature:0.2 });
+  
+  // Enter để gửi (mặc định: Turn into tasks)
+document.getElementById('aiInput')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    ai_text_to_tasks();
+  }
+});
+
+// Nút mũi tên gửi
+document.getElementById('aiSend')?.addEventListener('click', ai_text_to_tasks);
+
+  // cố gắng lấy JSON trong câu trả lời
+  function extractJson(s) {
+    if (!s) return null;
+    try { return JSON.parse(s); } catch {}
+    const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fence) { try { return JSON.parse(fence[1]); } catch {} }
+    const brace = s.match(/\{[\s\S]*\}/);
+    if (brace) { try { return JSON.parse(brace[0]); } catch {} }
+    return null;
+  }
+
+  const obj = extractJson(txt);
+  const arr = obj?.tasks || [];
+  if (!arr.length) {
+    alert("AI không tạo được task nào… (thử mô tả cụ thể hơn, VD: 'Write lab report on Friday; buy milk at 6pm; gym 30min')");
+    return;
+  }
+
+  arr.forEach(item=>{
+    const date = (item.date || today).slice(0,10);
+    state.tasks.unshift({
+      id:id(),
+      title: (item.title || 'Untitled').slice(0,140),
+      date,
+      done:false,
+      priority: [1,2,3].includes(+item.priority) ? +item.priority : 2,
+      notes: item.notes || null,
+      status:'todo',
+      tags: Array.isArray(item.tags) ? item.tags.filter(Boolean).map(s=>String(s).toLowerCase()) : []
+    });
+  });
+
+  document.getElementById('aiInput').value = '';
+  saveState(); render();
+  toast(`Đã thêm ${arr.length} task ✨`);
+}
+
+async function ai_summarize_today() {
+  const list = tasksFor(selectedDate);
+  const done = list.filter(t=>t.done);
+  const open = list.filter(t=>!t.done);
+
+  const sys = { role:'system', content:
+`You are a warm, concise daily reporter. Write 2–4 sentences total.
+Tone: encouraging, a bit playful. Avoid scolding.
+If there are completed items, celebrate. If not, suggest 1 tiny next step.`};
+
+  const usr = { role:'user', content:
+`Date: ${selectedDate}
+Completed: ${done.map(t=>"- "+t.title).join("\n") || "(none)"}
+Remaining: ${open.map(t=>"- "+t.title).join("\n") || "(none)"}`
+  };
+
+  const txt = await callAI([sys, usr], { temperature:0.5 });
+  const box = document.getElementById('dailyReflection');
+  box.value = (box.value ? (box.value+"\n\n") : "") + txt.trim();
+  box.dispatchEvent(new Event('input'));  // để trigger lưu
+  toast("Đã chèn Daily summary 🧁");
+}
+
+async function ai_autotag_priority_today() {
+  const list = tasksFor(selectedDate);
+  if (!list.length) { alert("Hôm nay chưa có task."); return; }
+
+  const sys = { role:'system', content:
+`Return STRICT JSON: {"updates":[{ "id":string, "priority":1|2|3, "tags":string[] }]}
+- Use task title (& notes) to infer tags (1–2 tags max) and priority (1 chill / 2 normal / 3 spicy).`};
+
+  const usr = { role:'user', content:
+JSON.stringify({ today: selectedDate, tasks: list.map(t=>({ id:t.id, title:t.title, notes:t.notes||null })) }, null, 2)
+  };
+
+  const txt = await callAI([sys, usr], { json:true, temperature:0.2 });
+  let obj=null; try{ const m=txt.match(/\{[\s\S]*\}/); obj=JSON.parse(m?m[0]:txt); }catch{}
+  const up = obj?.updates || [];
+  if (!up.length) { alert("AI không đề xuất gì 😅"); return; }
+
+  up.forEach(u=>{
+    const t = state.tasks.find(x=>x.id===u.id);
+    if (!t) return;
+    if ([1,2,3].includes(+u.priority)) t.priority = +u.priority;
+    if (Array.isArray(u.tags)) t.tags = u.tags.filter(Boolean).map(s=>String(s).toLowerCase());
+  });
+  saveState(); render();
+  toast("Đã auto-tag & phân ưu tiên 🏷️");
+}
+
+async function ai_polish_reflection() {
+  const box = document.getElementById('dailyReflection');
+  const raw = (box.value || "").trim();
+  if (!raw) { alert("Không có nội dung để polish."); return; }
+
+  const sys = { role:'system', content:
+`Rewrite the user's reflection so it's succinct, warm, and encouraging.
+Keep 2–4 sentences. Keep meaning, remove harsh self-criticism.`};
+  const usr = { role:'user', content: raw };
+
+  const txt = await callAI([sys, usr], { temperature:0.5 });
+  box.value = txt.trim();
+  box.dispatchEvent(new Event('input'));
+  toast("Polished 💗");
+}
+
+/* ---- Nút Plan trên từng task (ghi vào notes) ---- */
+async function ai_plan_for_task(task){
+  const sys = { role:'system', content:
+`Break the task into 5–7 tiny, actionable steps.
+Return a short bullet list. Keep each step 1 line, start with an emoji.` };
+  const usr = { role:'user', content: task.title + (task.notes? ("\nNotes: "+task.notes) : "") };
+
+  const txt = await callAI([sys, usr], { temperature:0.6 });
+  const add = "\n\nAI plan:\n" + txt.trim();
+  task.notes = (task.notes||"") + add;
+  saveState(); render();
+  toast("Đã tạo kế hoạch ✨");
+}
+
+/* ---- Gắn các nút vào UI ---- */
+document.getElementById('aiToTasks')?.addEventListener('click', ai_text_to_tasks);
+document.getElementById('aiSummarize')?.addEventListener('click', ai_summarize_today);
+document.getElementById('aiAutotag')?.addEventListener('click', ai_autotag_priority_today);
+document.getElementById('aiPolish')?.addEventListener('click', ai_polish_reflection);
+
+/* ---- toast nhỏ xinh ---- */
+function toast(msg){
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.className = "fixed left-1/2 -translate-x-1/2 bottom-4 z-[70] rounded-full px-4 py-2 text-sm bg-roseglass-400 text-white shadow-glass";
+  document.body.appendChild(t);
+  setTimeout(()=> t.remove(), 1800);
+}
+
+/* ---- Chèn nút Plan ✨ vào mỗi item khi render() chạy ---- */
+(function patchRenderForAI(){
+  const _render = window.render;
+  window.render = function(){
+    _render.apply(this, arguments);
+
+    // gắn nút "✨ Plan" vào mỗi task row (bên cạnh edit/delete)
+    const list = document.getElementById('taskList');
+    if (!list) return;
+    list.querySelectorAll('li').forEach((li, idx)=>{
+      const bar = li.querySelector('.opacity-0.transition.group-hover\\:opacity-100');
+      if (!bar || li._aiInjected) return;
+      const btn = document.createElement('button');
+      btn.className = "aiPlanBtn text-roseglass-500";
+      btn.title = "AI plan";
+      btn.textContent = "✨";
+      bar.prepend(btn);
+      li._aiInjected = true;
+
+      // tìm task tương ứng theo DOM index trong ngày
+      const tasks = tasksFor(selectedDate);
+      const t = tasks[idx];
+      btn.addEventListener('click', ()=> ai_plan_for_task(t));
+    });
+  };
+})();
+</script>
+<script>
+async function askMuse(prompt, op='summary') {
+  const endpoint = "https://muse-ai.kimphungphuc.workers.dev/ai"; // <-- thay bằng URL thật (có /ai)
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, op }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || res.statusText || 'Unknown error');
+    return data; // { ok:true, text: "...", provider:"openai", model:"..." }
+  } catch (e) {
+    alert('AI error: ' + e.message);
+    throw e;
+  }
+}
+async function onAiSummary() {
+  const input = document.querySelector('#aiNote').value || '';
+  const out = await askMuse(input, 'summary');
+  document.querySelector('#aiOutput').textContent = out.text || '(no text)';
+}
+</script>
+<script>
+  function setTheme(theme){
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('muse-theme', theme);
+    // đồng bộ cả desktop + mobile selects
+    document.querySelectorAll('.theme-select').forEach(s => { if (s.value !== theme) s.value = theme; });
+    // Chart: night dùng mono cho dễ nhìn
+    if (window.applyChartTheme) applyChartTheme(theme === 'night' ? 'mono' : 'default');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('muse-theme') || 'rose';
+    document.documentElement.dataset.theme = saved;
+    document.querySelectorAll('.theme-select').forEach(sel => {
+      sel.value = saved;
+      sel.addEventListener('change', e => setTheme(e.target.value));
+    });
+  });
+function applyChartTheme(mode) {
+  if (window.applyChartTheme) applyChartTheme(theme === 'night' ? 'mono' : 'default');
+  if (!window.bar || !window.pie) return;
+  if (mode === 'mono') {
+    window.bar.data.datasets[0].backgroundColor = '#3b82f6'; // Total
+    window.bar.data.datasets[1].backgroundColor = '#e879f9'; // Completed
+    window.pie.data.datasets[0].backgroundColor = ['#3b82f6', '#e879f9'];
+  } else {
+    window.bar.data.datasets[0].backgroundColor = 'rgb(59,130,246)';
+    window.bar.data.datasets[1].backgroundColor = 'rgb(244,63,94)';
+    window.pie.data.datasets[0].backgroundColor = ['rgb(59,130,246)','rgb(244,63,94)'];
+  }
+  window.bar.update();
+  window.pie.update();
+}
+</script>
+</body>
+</html>

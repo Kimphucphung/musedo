@@ -1,0 +1,186 @@
+/* === THEME DROPDOWN STYLE === */
+.theme-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.75rem 0;
+}
+
+.theme-select {
+  appearance: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0,0,0,0.1);
+  background-color: white;
+  color: #1f2937;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* hover/focus */
+.theme-select:hover { background-color: #f9fafb; }
+.theme-select:focus { outline: 2px solid #fb923c; }
+
+/* === DAYLIGHT THEME === */
+html[data-theme="daylight"] body {
+  background:#ffffff;
+  color:#1f2937; /* text đen */
+}
+
+/* đổi hồng -> cam */
+html[data-theme="daylight"] .bg-rose-100,
+html[data-theme="daylight"] .bg-rose-200,
+html[data-theme="daylight"] .bg-roseglass-400 {
+  background-color: #fb923c !important;
+}
+html[data-theme="daylight"] .text-rose-700,
+html[data-theme="daylight"] .text-rose-700\/70 {
+  color: #ea580c !important;
+}
+html[data-theme="daylight"] .border-rose-100,
+html[data-theme="daylight"] .border-rose-200 {
+  border-color: #fdba74 !important;
+}
+
+/* === NIGHT THEME === */
+html[data-theme="night"] body {
+  background: #122333;
+  color: #E2F1FF; /* chữ mặc định */
+}
+
+/* Box nền trắng ngà xanh */
+html[data-theme="night"] .bg-white\/50,
+html[data-theme="night"] .bg-white\/60,
+html[data-theme="night"] .bg-white\/70,
+html[data-theme="night"] .bg-white\/80,
+html[data-theme="night"] .bg-white\/90 {
+  background-color: #E2F1FF !important;
+  color: #122333 !important; /* chữ trong box đậm trở lại */
+}
+
+/* Chữ đang màu hồng -> xanh nhạt #B5DBFF */
+html[data-theme="night"] .text-rose-700,
+html[data-theme="night"] .text-rose-700\/70,
+html[data-theme="night"] .text-rose-900,
+html[data-theme="night"] .text-roseglass-500,
+html[data-theme="night"] .text-rose-600,
+html[data-theme="night"] .text-rose-400 {
+  color: #B5DBFF !important;
+}
+
+/* Hero background mặc định (rose) */
+.bg-hero {
+  background: linear-gradient(to bottom, #ffe4f1 0%, #ffe4e6 40%, #f5d0fe 100%);
+}
+
+/* Blob base */
+.themed-blob { filter: blur(60px); opacity: .7; }
+
+/* ===== DAYLIGHT ===== */
+html[data-theme="daylight"] body { background:#ffffff; color:#1f2937; }
+
+/* Nền hero trắng */
+html[data-theme="daylight"] .bg-hero { background:#ffffff !important; }
+/* Ẩn blob để nền phẳng hơn */
+html[data-theme="daylight"] .themed-blob { display:none; }
+
+/* Hồng -> Cam (accent) */
+html[data-theme="daylight"] .bg-rose-50,
+html[data-theme="daylight"] .bg-rose-100,
+html[data-theme="daylight"] .bg-rose-200,
+html[data-theme="daylight"] .bg-roseglass-400 { background-color:#fb923c !important; }
+
+html[data-theme="daylight"] .text-rose-900,
+html[data-theme="daylight"] .text-roseglass-500 { color:#111827 !important; }
+
+html[data-theme="daylight"] .text-rose-700,
+html[data-theme="daylight"] .text-rose-700\/70 { color:#ea580c !important; }
+
+html[data-theme="daylight"] .border-rose-100,
+html[data-theme="daylight"] .border-rose-200,
+html[data-theme="daylight"] .ring-roseglass-400 { border-color:#fdba74 !important; }
+
+/* Active tab (nút có data-active=true) */
+html[data-theme="daylight"] .navBtn[data-active="true"]{
+  background:#fb923c !important; color:#fff !important;
+}
+
+/* ===== NIGHT ===== */
+html[data-theme="night"] body { background:#111827; color:#E2F1FF; }
+
+/* Nền hero tối kiểu ảnh mẫu */
+html[data-theme="night"] .bg-hero{
+  background: radial-gradient(60% 50% at 50% 45%, #1e1b4b 0%, #0f172a 60%, #020617 100%) !important;
+}
+html[data-theme="night"] .absolute.inset-0.bg-gradient-to-b {
+  display: none !important;
+}
+
+/* Blob đậm hơn */
+html[data-theme="night"] .themed-blob { opacity:.25; background-color:#312e81 !important; }
+
+/* Background tối navy */
+html[data-theme="night"] .bg-rose-100,
+html[data-theme="night"] .bg-rose-200,
+html[data-theme="night"] .bg-roseglass-400 {
+  background-color: #1e293b !important;
+  color: #E2F1FF !important;
+  border-color:rgba(229,241,255,.2) !important;
+}
+
+/* 2. Text & badge */
+html[data-theme="night"] .bg-rose-200\/60 {
+  background-color: rgba(229, 241, 255, 0.1) !important;
+  color: #E2F1FF !important;
+  border-color: rgba(229, 241, 255, 0.2) !important;
+}
+html[data-theme="night"] .text-rose-700,
+html[data-theme="night"] .text-rose-700\/70,
+html[data-theme="night"] .text-rose-900,
+html[data-theme="night"] .text-roseglass-500 {
+  color: #B5DBFF !important;
+}
+
+/* Viền nhạt */
+html[data-theme="night"] .border-rose-100,
+html[data-theme="night"] .border-rose-200,
+html[data-theme="night"] .ring-roseglass-400 {
+  border-color: rgba(229, 241, 255, 0.15) !important;
+}
+
+/* Các nút chính (Tasks/Garden/Timer/Quotes) */
+html[data-theme="night"] .navBtn {
+  background-color: transparent;
+  color: #E2F1FF;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: background-color 0.2s, color 0.2s;
+}
+html[data-theme="night"] .navBtn[data-active="true"] {
+  background-color: #E2F1FF !important;
+  color: #122333 !important;
+}
+html[data-theme="night"] .navBtn:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+/* Nút Add, Save, ... accent = #E2F1FF nền = đậm */
+html[data-theme="night"] button,
+html[data-theme="night"] select,
+html[data-theme="night"] input,
+html[data-theme="night"] textarea {
+  background-color: #E2F1FF;
+  color: #122333;
+}
+
+/* Priority chip màu khác nhau nhưng tone đêm */
+html[data-theme="night"] select,
+html[data-theme="night"] .bg-pink-100 { background-color:#334155 !important; color:#E2F1FF !important; }
+html[data-theme="night"] .bg-fuchsia-100 { background-color:#3f3cbb !important; color:#E2F1FF !important; }
+
+html[data-theme="night"] .navBtn[data-active="false"] {
+  color:#B5DBFF;
+}
+
+/* Footer text chìm bớt */
+html[data-theme="night"] footer { color:#A1C8EE !important; }
