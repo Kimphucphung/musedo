@@ -1328,29 +1328,24 @@ async function ai_text_to_tasks() {
   const sys = { role:'system', content:
 `You turn casual notes into to-do items for a personal task app.
 Return STRICT JSON: {"tasks":[{ "title":string, "date": "YYYY-MM-DD", "priority":1|2|3, "tags":string[], "notes":string? }]}.
-- If input has relative time like "tomorrow", compute from TODAY provided by user.
-- Keep titles short & actionable. Priority: 1=chill, 2=normal, 3=spicy.
-- Tags are lowercase single words (like "work","study","personal").`};
+- If input has relative time like "tomorrow" or "next week", compute from TODAY.
+- Keep titles short & actionable. Priority: 1=chill, 2=normal, 3=spicy.`};
 
-  const usr = { role:'user', content:
-    `TODAY = ${today}
-    Text:
-    ${raw}`};
+  const usr = { role:'user', content:`TODAY = ${today}\nText:\n${raw}` };
 
   const txt = await callAI([sys, usr], { json:true, temperature:0.2 });
-  
-  // Enter để gửi (mặc định: Turn into tasks)
-document.getElementById('aiInput')?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    ai_text_to_tasks();
+
+  // ===== helpers =====
+  function nextWeekday(target){ const d=new Date(); let add=(target - d.getDay() + 7) % 7; if(add===0) add=7; d.setDate(d.getDate()+add); return toLocalISO(d); }
+  function nextMonday(){ return nextWeekday(1); }
+  function inferDate(s){
+    s = (s||"").toLowerCase();
+    if (s.includes("tomorrow")) return toLocalISO(addDays(new Date(),1));
+    if (s.includes("next week")) return nextMonday();
+    const names=["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+    for (let i=0;i<7;i++) if (s.includes(names[i])) return nextWeekday(i);
+    return today;
   }
-});
-
-// Nút mũi tên gửi
-document.getElementById('aiSend')?.addEventListener('click', ai_text_to_tasks);
-
-  // cố gắng lấy JSON trong câu trả lời
   function extractJson(s) {
     if (!s) return null;
     try { return JSON.parse(s); } catch {}
@@ -1361,13 +1356,35 @@ document.getElementById('aiSend')?.addEventListener('click', ai_text_to_tasks);
     return null;
   }
 
-  const obj = extractJson(txt);
-  const arr = obj?.tasks || [];
+  // 1) thử parse JSON “đúng chuẩn”
+  let obj = extractJson(txt);
+  let arr = obj?.tasks;
+
+  // 2) FALLBACK: tự bóc từ văn bản (bullet list, hoặc tạo 1 task từ input)
+  if (!Array.isArray(arr) || !arr.length) {
+    const lines = (txt || "")
+      .split(/\r?\n/)
+      .map(s=>s.replace(/^[\-\*\d\.\)]\s*/,'').trim())
+      .filter(Boolean);
+    const base = lines.length ? lines : [raw];
+    arr = base.map(line => ({
+      title: line
+        .replace(/^create\s+/i,'')
+        .replace(/\bfor me\b/i,'')
+        .replace(/\bnext week\b/i,'weekly')
+        .trim() || 'Untitled',
+      date: inferDate(line || raw),
+      priority: 2,
+      tags: []
+    }));
+  }
+
   if (!arr.length) {
     alert("AI không tạo được task nào… (thử mô tả cụ thể hơn, VD: 'Write lab report on Friday; buy milk at 6pm; gym 30min')");
     return;
   }
 
+  // thêm vào state
   arr.forEach(item=>{
     const date = (item.date || today).slice(0,10);
     state.tasks.unshift({
@@ -1386,6 +1403,10 @@ document.getElementById('aiSend')?.addEventListener('click', ai_text_to_tasks);
   saveState(); render();
   toast(`Đã thêm ${arr.length} task ✨`);
 }
+document.getElementById('aiInput')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ai_text_to_tasks(); }
+});
+document.getElementById('aiSend')?.addEventListener('click', ai_text_to_tasks);
 
 async function ai_summarize_today() {
   const list = tasksFor(selectedDate);
