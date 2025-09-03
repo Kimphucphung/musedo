@@ -510,6 +510,15 @@
     </div>
 
     <div class="ai-sep my-3"></div>
+    <div class="text-xs text-rose-700/70 mb-1">Ask Muse (beta)</div>
+    <div id="aiChatBox" class="h-40 overflow-y-auto bg-white/60 rounded-2xl p-3 text-sm mb-2"></div>
+    <div class="flex gap-2">
+      <input id="aiChatInput"
+            class="flex-1 rounded-2xl bg-white/70 p-2 text-sm ring-1 ring-white/60"
+            placeholder="Ask anything…" />
+      <button id="aiChatSend"
+              class="rounded-full bg-roseglass-400 text-white px-3 py-2 shadow-glass">Send</button>
+    </div>
 
     <div class="text-xs text-rose-700/70">
       Tip: For each task, click <span class="font-bold">✨ Plan</span> to let AI split it into small steps (write it in Notes).
@@ -1297,18 +1306,37 @@ document.addEventListener('click', () => {
 const AI_PROXY_URL = "https://muse-ai.kimphungphuc.workers.dev/ai";
 
 /* --- helper gọi AI qua proxy (OpenAI-compatible) --- */
-async function callAI(messages, {json=false, temperature=0.4}={}) {
-  try{
+async function callAI(messages, { json=false, temperature=0.4 } = {}) {
+  try {
     const res = await fetch(AI_PROXY_URL, {
-      method:'POST',
-      headers:{'content-type':'application/json'},
+      method: 'POST',
+      headers: { 'content-type':'application/json' },
       body: JSON.stringify({ messages, json, temperature })
     });
-    const data = await res.json();
-    return data.text || "";            // worker trả { text }
-  }catch(e){
-    alert("AI error: " + (e?.message || e));
-    return "";
+    // đọc thô để log khi JSON lỗi
+    const raw = await res.text();
+    let data = {};
+    try { data = JSON.parse(raw); } catch { data = { raw }; }
+
+    if (!res.ok) {
+      const msg = data.error || data.message || res.statusText || 'Unknown error';
+      throw new Error(msg);
+    }
+    const text =
+      data.text ??
+      data.reply ??
+      data.output ??
+      data.choices?.[0]?.message?.content ??
+      data.choices?.[0]?.text ??
+      '';
+    if (!text || !String(text).trim()) {
+      throw new Error('Empty response from AI');
+    }
+    return String(text);
+  } catch (e) {
+    console.error('AI error:', e);
+    alert('AI error: ' + (e.message || e));
+    return '(error)';
   }
 }
 
@@ -1488,6 +1516,47 @@ Return a short bullet list. Keep each step 1 line, start with an emoji.` };
   toast("Đã tạo kế hoạch ✨");
 }
 
+// ====== Simple chat with Muse AI (beta) ======
+const chatHistory = [
+  { role: 'system', content:
+    `You are Muse AI. Be concise, friendly, and helpful.
+     Default to short answers (3–6 lines). Use lists when helpful.` }
+];
+
+function addChatBubble(sender, text){
+  const box = document.getElementById('aiChatBox');
+  if (!box) return;
+  const item = document.createElement('div');
+  item.className = 'mb-2';
+  item.innerHTML =
+    `<div class="text-[10px] opacity-60 mb-0.5">${sender}</div>
+     <div class="rounded-xl px-3 py-2 bg-white/80 ring-1 ring-white/60">${text
+       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+       .replace(/\n/g,'<br>')}</div>`;
+  box.appendChild(item);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function ai_chat_send(){
+  const input = document.getElementById('aiChatInput');
+  const q = (input?.value || '').trim();
+  if (!q) return;
+  addChatBubble('You', q);
+  input.value = '';
+  chatHistory.push({ role:'user', content: q });
+  const ctx = [chatHistory[0], ...chatHistory.slice(-8)];
+  const reply = await callAI(ctx, { temperature: 0.6 });
+  const text  = (reply || '').trim();
+  addChatBubble('Muse', text || '(no answer)');
+  chatHistory.push({ role:'assistant', content: text || '(no answer)'});
+  // Optional: lưu 10 message gần nhất
+  try { localStorage.setItem('muse-chat', JSON.stringify(chatHistory.slice(-10))); } catch {}
+}
+document.getElementById('aiChatSend')?.addEventListener('click', ai_chat_send);
+document.getElementById('aiChatInput')?.addEventListener('keydown', (e)=>{
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ai_chat_send(); }
+});
+
 /* ---- Gắn các nút vào UI ---- */
 document.getElementById('aiToTasks')?.addEventListener('click', ai_text_to_tasks);
 document.getElementById('aiSummarize')?.addEventListener('click', ai_summarize_today);
@@ -1532,7 +1601,7 @@ function toast(msg){
 </script>
 <script>
 async function askMuse(prompt, op='summary') {
-  const endpoint = "https://muse-ai.kimphungphuc.workers.dev/ai"; // <-- thay bằng URL thật (có /ai)
+  const endpoint = "https://muse-ai.kimphungphuc.workers.dev/ai";
   try {
     const res = await fetch(endpoint, {
       method: 'POST',
@@ -1541,7 +1610,7 @@ async function askMuse(prompt, op='summary') {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || res.statusText || 'Unknown error');
-    return data; // { ok:true, text: "...", provider:"openai", model:"..." }
+    return data;
   } catch (e) {
     alert('AI error: ' + e.message);
     throw e;
