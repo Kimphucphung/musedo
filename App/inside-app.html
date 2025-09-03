@@ -55,6 +55,13 @@
   </style>
   <style>
   /* ===== AI FAB & Panel (khớp aesthetic rose/glass) ===== */
+  .ai-body{                     
+  overflow: auto;
+  padding: 16px;
+  }
+  .ai-modes{                  
+  display:flex; gap:8px; flex-wrap:wrap;
+  }
   .ai-fab{
     position:fixed; right:16px; bottom:16px; z-index:60;
     height:56px; width:56px; border-radius:9999px;
@@ -64,6 +71,24 @@
     display:flex; align-items:center; justify-content:center;
     font-size:22px;
   }
+  .ai-mode{
+    padding:6px 10px; border-radius:9999px; font-size:12px; font-weight:600;
+    background:rgba(255,255,255,.9); border:1px solid rgba(244,63,94,.18); color:#7f1d1d;
+    cursor:pointer;
+  }
+  .ai-mode[data-active="true"]{
+    background:#fb7185; color:white; border-color:#fb7185;
+  }
+  .ai-feed{                     /* NEW: one unified feed */
+    margin-top:12px; background:rgba(255,255,255,.6);
+    border-radius:16px; padding:10px; height:180px; overflow:auto;
+  }
+  .ai-bubble{ margin-bottom:8px; }
+  .ai-bubble .from{ font-size:10px; opacity:.6; margin-bottom:2px; }
+  .ai-bubble .msg{ background:rgba(255,255,255,.8); border:1px solid rgba(255,255,255,.6);
+    border-radius:12px; padding:8px; font-size:14px;
+  }
+  
   .ai-fab:hover{ filter:brightness(1.05); }
 
   .ai-panel{
@@ -74,6 +99,10 @@
     backdrop-filter: blur(8px) saturate(130%);
     border:1px solid rgba(244,63,94,.16);
     box-shadow:0 24px 60px -16px rgba(244,63,94,.28);
+    /* NEW: make it never overflow screen */
+    max-height: 80vh; 
+    display: flex;             /* for column layout */
+    flex-direction: column;
   }
   .ai-pill{
     display:inline-flex; align-items:center; gap:8px;
@@ -484,44 +513,40 @@
 <!-- ===== AI FAB + PANEL ===== -->
 <button id="aiFab" class="ai-fab" title="Muse AI">✨</button>
 <div id="aiPanel" class="ai-panel hidden">
-  <div class="p-4 pb-2">
+  <div class="p-4 pb-2 sticky top-0 bg-transparent backdrop-blur-xl">
     <div class="flex items-center justify-between">
       <div class="ai-pill">🤖 Muse AI</div>
       <button id="aiClose" class="h-9 w-9 rounded-full border border-rose-100 bg-white/80 hover:bg-white">✕</button>
     </div>
     <h3 class="mt-3 text-lg font-bold text-rose-900">Boost your tiny wins</h3>
-    <p class="text-sm text-rose-700/80">Enter ideas/notes, AI will help you create tasks, summarize the day, tag & prioritize automatically.</p>
-    <textarea id="aiInput"
-      class="mt-3 w-full h-24 rounded-2xl bg-white/70 p-3 text-sm outline-none ring-1 ring-white/60 focus:ring-roseglass-400"
-      placeholder="Eg: Write lab report on Friday, practice vocabulary for 30 minutes."></textarea>
+    <p class="text-sm text-rose-700/80">Một ô duy nhất cho mọi chế độ.</p>
+
+    <!-- Chọn chế độ -->
+    <div class="ai-modes mt-2">
+      <button class="ai-mode" data-mode="tasks"    data-active="true">✨ Tasks</button>
+      <button class="ai-mode" data-mode="summary">🧁 Summary</button>
+      <button class="ai-mode" data-mode="autotag">🏷 Auto-tag</button>
+      <button class="ai-mode" data-mode="polish">💗 Polish</button>
+      <button class="ai-mode" data-mode="chat">💬 Chat</button>
+    </div>
+  </div>
+
+  <div class="ai-body">
+    <!-- Một textarea dùng cho mọi chế độ -->
+    <textarea id="aiUnifiedInput"
+      class="w-full h-24 rounded-2xl bg-white/70 p-3 text-sm outline-none ring-1 ring-white/60 focus:ring-roseglass-400"
+      placeholder="Describe your tasks, write notes, or ask Muse…"></textarea>
+
     <div class="mt-2 flex items-center justify-end">
-      <button id="aiSend"
+      <button id="aiUnifiedSend"
         class="h-9 w-9 rounded-full bg-roseglass-400 text-white shadow-glass flex items-center justify-center"
-        title="Send">
-        <span style="transform: rotate(-90deg); display: inline-block;">➤</span>
-      </button>
+        title="Send"><span style="transform: rotate(-90deg); display: inline-block;">➤</span></button>
     </div>
 
-    <div class="mt-3 grid grid-cols-2 gap-2">
-      <button id="aiToTasks" class="rounded-2xl bg-roseglass-400 text-white px-3 py-2 shadow-glass hover:brightness-105">✨ Turn into tasks</button>
-      <button id="aiSummarize" class="rounded-2xl border border-rose-200 px-3 py-2 hover:bg-white">🧁 Summary of the day</button>
-      <button id="aiAutotag" class="rounded-2xl border border-rose-200 px-3 py-2 hover:bg-white">🏷️ Auto-tag & prioritize</button>
-      <button id="aiPolish" class="rounded-2xl border border-rose-200 px-3 py-2 hover:bg-white">💗 Polish Reflection</button>
-    </div>
-
-    <div class="ai-sep my-3"></div>
-    <div class="text-xs text-rose-700/70 mb-1">Ask Muse (beta)</div>
-    <div id="aiChatBox" class="h-40 overflow-y-auto bg-white/60 rounded-2xl p-3 text-sm mb-2"></div>
-    <div class="flex gap-2">
-      <input id="aiChatInput"
-            class="flex-1 rounded-2xl bg-white/70 p-2 text-sm ring-1 ring-white/60"
-            placeholder="Ask anything…" />
-      <button id="aiChatSend"
-              class="rounded-full bg-roseglass-400 text-white px-3 py-2 shadow-glass">Send</button>
-    </div>
-
-    <div class="text-xs text-rose-700/70">
-      Tip: For each task, click <span class="font-bold">✨ Plan</span> to let AI split it into small steps (write it in Notes).
+    <!-- Kết quả/đối thoại chung -->
+    <div id="aiFeed" class="ai-feed"></div>
+    <div class="text-xs text-rose-700/70 mt-1">
+      Tip: Click <b>✨ Plan</b> trên mỗi task để AI chia nhỏ bước và ghi vào Notes.
     </div>
   </div>
 </div>
@@ -1149,8 +1174,6 @@ btnSignOutEls.forEach(btn => btn.addEventListener('click', () => signOut(auth)))
       applyAuthUI({ signedIn: false });
       return;
     }
-    window.__MUSE_UID__ = user.uid;
-    applyAuthUI(true, user.displayName || 'Google'); 
 
     // Đang đăng nhập
     window.__MUSE_UID__ = user.uid;
@@ -1340,16 +1363,9 @@ async function callAI(messages, { json=false, temperature=0.4 } = {}) {
   }
 }
 
-/* ---------- UI open/close panel ---------- */
-const aiFab   = document.getElementById('aiFab');
-const aiPanel = document.getElementById('aiPanel');
-const aiClose = document.getElementById('aiClose');
-aiFab?.addEventListener('click', ()=> aiPanel.classList.toggle('hidden'));
-aiClose?.addEventListener('click', ()=> aiPanel.classList.add('hidden'));
-
 /* ---------- Các hành động AI ---------- */
 async function ai_text_to_tasks() {
-  const raw = (document.getElementById('aiInput').value || "").trim();
+  const raw = (document.getElementById('aiUnifiedInput').value || "").trim();
   if (!raw) { alert("Hãy nhập mô tả/ghi chú để tạo tasks ✨"); return; }
   const today = toLocalISO(new Date());
 
@@ -1427,14 +1443,11 @@ Return STRICT JSON: {"tasks":[{ "title":string, "date": "YYYY-MM-DD", "priority"
     });
   });
 
-  document.getElementById('aiInput').value = '';
+  const u = document.getElementById('aiUnifiedInput');
+  if (u) u.value = '';
   saveState(); render();
   toast(`Đã thêm ${arr.length} task ✨`);
 }
-document.getElementById('aiInput')?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ai_text_to_tasks(); }
-});
-document.getElementById('aiSend')?.addEventListener('click', ai_text_to_tasks);
 
 async function ai_summarize_today() {
   const list = tasksFor(selectedDate);
@@ -1502,6 +1515,95 @@ Keep 2–4 sentences. Keep meaning, remove harsh self-criticism.`};
   toast("Polished 💗");
 }
 
+/* ===== Unified AI panel logic ===== */
+let AI_MODE = 'tasks'; // tasks | summary | autotag | polish | chat
+
+function setMode(m){
+  AI_MODE = m;
+  document.querySelectorAll('.ai-mode').forEach(b=>{
+    b.dataset.active = (b.dataset.mode === m) ? "true" : "false";
+  });
+  const textarea = document.getElementById('aiUnifiedInput');
+  if (!textarea) return;
+  const ph = {
+    tasks:   "Eg: Write lab report on Friday; gym 30min; buy groceries...",
+    summary: "Nội dung mô tả/ngữ cảnh cần tóm tắt cho hôm nay…",
+    autotag: "Không cần nhập (dùng danh sách task hôm nay).",
+    polish:  "Paste reflection của bạn để làm đẹp câu chữ…",
+    chat:    "Ask anything…"
+  }[m] || "Type here…";
+  textarea.placeholder = ph;
+}
+
+document.querySelectorAll('.ai-mode').forEach(btn=>{
+  btn.addEventListener('click', ()=> setMode(btn.dataset.mode));
+});
+
+function feedAppend(sender, text){
+  const box = document.getElementById('aiFeed');
+  if (!box) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'ai-bubble';
+  const safe = (text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  wrap.innerHTML = `<div class="from">${sender}</div><div class="msg">${safe}</div>`;
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function aiUnifiedSend(){
+  const ta = document.getElementById('aiUnifiedInput');
+  const val = (ta?.value || '').trim();
+
+  if (AI_MODE !== 'autotag' && AI_MODE !== 'summary') {
+    if (!val) { ta?.focus(); return; }
+    feedAppend('You', val);
+  }
+
+  try {
+    if (AI_MODE === 'tasks') {
+      await ai_text_to_tasks();
+      feedAppend('Muse', 'Đã tạo tasks từ ghi chú của bạn ✨');
+    } else if (AI_MODE === 'summary') {
+      await ai_summarize_today();
+      feedAppend('Muse', 'Đã chèn Daily summary 🧁');
+    } else if (AI_MODE === 'autotag') {
+      await ai_autotag_priority_today();
+      feedAppend('Muse', 'Đã auto-tag & phân ưu tiên 🏷️');
+    } else if (AI_MODE === 'polish') {
+      document.getElementById('dailyReflection').value = val;
+      await ai_polish_reflection();
+      feedAppend('Muse', 'Đã polish reflection 💗');
+    } else {
+      const reply = await callAI(
+        [
+          { role:'system', content:'You are Muse AI. Be concise and helpful.' },
+          { role:'user', content: val }
+        ],
+        { temperature:0.6 }
+      );
+      feedAppend('Muse', reply || '(no answer)');
+    }
+  } catch(e){
+    feedAppend('Muse', '(error) ' + (e?.message || e));
+  }
+
+  ta.value = '';
+}
+
+document.getElementById('aiUnifiedSend')?.addEventListener('click', aiUnifiedSend);
+document.getElementById('aiUnifiedInput')?.addEventListener('keydown', (e)=>{
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); aiUnifiedSend(); }
+});
+
+document.getElementById('aiFab')?.addEventListener('click', ()=>{
+  document.getElementById('aiPanel')?.classList.toggle('hidden');
+});
+document.getElementById('aiClose')?.addEventListener('click', ()=>{
+  document.getElementById('aiPanel')?.classList.add('hidden');
+});
+
+setMode('tasks');
+
 /* ---- Nút Plan trên từng task (ghi vào notes) ---- */
 async function ai_plan_for_task(task){
   const sys = { role:'system', content:
@@ -1515,53 +1617,6 @@ Return a short bullet list. Keep each step 1 line, start with an emoji.` };
   saveState(); render();
   toast("Đã tạo kế hoạch ✨");
 }
-
-// ====== Simple chat with Muse AI (beta) ======
-const chatHistory = [
-  { role: 'system', content:
-    `You are Muse AI. Be concise, friendly, and helpful.
-     Default to short answers (3–6 lines). Use lists when helpful.` }
-];
-
-function addChatBubble(sender, text){
-  const box = document.getElementById('aiChatBox');
-  if (!box) return;
-  const item = document.createElement('div');
-  item.className = 'mb-2';
-  item.innerHTML =
-    `<div class="text-[10px] opacity-60 mb-0.5">${sender}</div>
-     <div class="rounded-xl px-3 py-2 bg-white/80 ring-1 ring-white/60">${text
-       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-       .replace(/\n/g,'<br>')}</div>`;
-  box.appendChild(item);
-  box.scrollTop = box.scrollHeight;
-}
-
-async function ai_chat_send(){
-  const input = document.getElementById('aiChatInput');
-  const q = (input?.value || '').trim();
-  if (!q) return;
-  addChatBubble('You', q);
-  input.value = '';
-  chatHistory.push({ role:'user', content: q });
-  const ctx = [chatHistory[0], ...chatHistory.slice(-8)];
-  const reply = await callAI(ctx, { temperature: 0.6 });
-  const text  = (reply || '').trim();
-  addChatBubble('Muse', text || '(no answer)');
-  chatHistory.push({ role:'assistant', content: text || '(no answer)'});
-  // Optional: lưu 10 message gần nhất
-  try { localStorage.setItem('muse-chat', JSON.stringify(chatHistory.slice(-10))); } catch {}
-}
-document.getElementById('aiChatSend')?.addEventListener('click', ai_chat_send);
-document.getElementById('aiChatInput')?.addEventListener('keydown', (e)=>{
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ai_chat_send(); }
-});
-
-/* ---- Gắn các nút vào UI ---- */
-document.getElementById('aiToTasks')?.addEventListener('click', ai_text_to_tasks);
-document.getElementById('aiSummarize')?.addEventListener('click', ai_summarize_today);
-document.getElementById('aiAutotag')?.addEventListener('click', ai_autotag_priority_today);
-document.getElementById('aiPolish')?.addEventListener('click', ai_polish_reflection);
 
 /* ---- toast nhỏ xinh ---- */
 function toast(msg){
@@ -1600,29 +1655,6 @@ function toast(msg){
 })();
 </script>
 <script>
-async function askMuse(prompt, op='summary') {
-  const endpoint = "https://muse-ai.kimphungphuc.workers.dev/ai";
-  try {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, op }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || res.statusText || 'Unknown error');
-    return data;
-  } catch (e) {
-    alert('AI error: ' + e.message);
-    throw e;
-  }
-}
-async function onAiSummary() {
-  const input = document.querySelector('#aiNote').value || '';
-  const out = await askMuse(input, 'summary');
-  document.querySelector('#aiOutput').textContent = out.text || '(no text)';
-}
-</script>
-<script>
   function setTheme(theme){
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('muse-theme', theme);
@@ -1641,11 +1673,10 @@ async function onAiSummary() {
     });
   });
 function applyChartTheme(mode) {
-  if (window.applyChartTheme) applyChartTheme(theme === 'night' ? 'mono' : 'default');
   if (!window.bar || !window.pie) return;
   if (mode === 'mono') {
-    window.bar.data.datasets[0].backgroundColor = '#3b82f6'; // Total
-    window.bar.data.datasets[1].backgroundColor = '#e879f9'; // Completed
+    window.bar.data.datasets[0].backgroundColor = '#3b82f6';
+    window.bar.data.datasets[1].backgroundColor = '#e879f9';
     window.pie.data.datasets[0].backgroundColor = ['#3b82f6', '#e879f9'];
   } else {
     window.bar.data.datasets[0].backgroundColor = 'rgb(59,130,246)';
@@ -1656,5 +1687,6 @@ function applyChartTheme(mode) {
   window.pie.update();
 }
 </script>
+
 </body>
 </html>
