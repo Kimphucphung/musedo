@@ -467,7 +467,7 @@
       </div>
 
       <div class="mt-4 text-xs text-rose-700/70">
-        *Report dựa trên dữ liệu task hiện có trong local/cloud.
+        *Report based on existing task data in local/cloud.
       </div>
     </div>
   </div>
@@ -519,7 +519,7 @@
       <button id="aiClose" class="h-9 w-9 rounded-full border border-rose-100 bg-white/80 hover:bg-white">✕</button>
     </div>
     <h3 class="mt-3 text-lg font-bold text-rose-900">Boost your tiny wins</h3>
-    <p class="text-sm text-rose-700/80">Một ô duy nhất cho mọi chế độ.</p>
+    <p class="text-sm text-rose-700/80">One cell for all modes.</p>
 
     <!-- Chọn chế độ -->
     <div class="ai-modes mt-2">
@@ -546,7 +546,7 @@
     <!-- Kết quả/đối thoại chung -->
     <div id="aiFeed" class="ai-feed"></div>
     <div class="text-xs text-rose-700/70 mt-1">
-      Tip: Click <b>✨ Plan</b> trên mỗi task để AI chia nhỏ bước và ghi vào Notes.
+      Tip: Click <b>✨ Plan</b> on each task for AI to break down the steps and record them in Notes.
     </div>
   </div>
 </div>
@@ -1526,10 +1526,10 @@ function setMode(m){
   const textarea = document.getElementById('aiUnifiedInput');
   if (!textarea) return;
   const ph = {
-    tasks:   "Eg: Write lab report on Friday; gym 30min; buy groceries...",
-    summary: "Nội dung mô tả/ngữ cảnh cần tóm tắt cho hôm nay…",
-    autotag: "Không cần nhập (dùng danh sách task hôm nay).",
-    polish:  "Paste reflection của bạn để làm đẹp câu chữ…",
+    tasks:   "Eg: Write lab report on Friday; gym 30min everyday...",
+    summary: "Recap today's moments",
+    autotag: "Check your to-do's list",
+    polish:  "Add your story to the page…",
     chat:    "Ask anything…"
   }[m] || "Type here…";
   textarea.placeholder = ph;

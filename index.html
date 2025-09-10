@@ -91,7 +91,6 @@
 </style>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-rose-50 via-pink-50 to-white text-rose-900">
-<!-- NAV -->
 <header class="sticky top-0 z-30 backdrop-blur bg-white/40 border-b border-rose-100">
   <div class="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
     <a href="#top" class="font-black text-2xl">muse.<span class="text-roseglass-400">do</span></a>
@@ -101,8 +100,12 @@
       <a href="#faq" class="hover:text-roseglass-400">FAQ</a>
     </nav>
     <div class="flex items-center gap-3">
-      <a href="App/inside-app.html" class="text-sm px-3 py-1.5">Sign In</a>
-      <a href="App/inside-app.html#signup" class="text-sm px-3 py-1.5 rounded-2xl bg-roseglass-400 text-white shadow-glass hover:brightness-105">Sign Up</a>
+      <a href="App/inside-app.html" class="text-sm px-3 py-1.5 auth-link">Sign In</a>
+      <a href="App/inside-app.html#signup"
+        data-mode="signup"
+        class="text-sm px-3 py-1.5 rounded-2xl bg-roseglass-400 text-white shadow-glass hover:brightness-105 auth-link">
+        Sign Up
+      </a>
     </div>
   </div>
 </header>
@@ -211,7 +214,7 @@
     </div>
     <div class="rounded-2xl border border-rose-100 bg-white/70 p-5 shadow-sm hover:-translate-y-1 hover:shadow-xl transition">
       <div class="flex items-center gap-3">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#881337"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM480-240q-17 0-28.5-11.5T440-280q0-17 11.5-28.5T480-320q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240Zm-160 0q-17 0-28.5-11.5T280-280q0-17 11.5-28.5T320-320q17 0 28.5 11.5T360-280q0 17-11.5 28.5T320-240Zm320 0q-17 0-28.5-11.5T600-280q0-17 11.5-28.5T640-320q17 0 28.5 11.5T680-280q0 17-11.5 28.5T640-240Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#881337"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400Z"/></svg>
         <h3 class="font-semibold">Weekly recap</h3></div>
       <p class="mt-2 text-rose-700 text-sm">See tiny wins add up. Export CSV when needed.</p>
     </div>
@@ -276,20 +279,20 @@
       <ul class="mt-3 text-sm list-disc pl-5 space-y-1">
         <li>Core tasks, 1 Garden</li><li>Timer, Reports</li><li>Local/cloud sync (limited)</li>
       </ul>
-      <a href="App/inside-app.html" class="mt-4 inline-block rounded-2xl bg-roseglass-400 text-white px-4 py-2 hover:brightness-105">Try free</a>
+      <a href="App/inside-app.html" class="mt-4 inline-block rounded-2xl bg-roseglass-400 text-white px-4 py-2 hover:brightness-105 auth-link">Try free</a>
     </div>
     <div class="relative rounded-2xl border-2 border-rose-400 bg-white p-6 shadow-glass hover:-translate-y-1 hover:shadow-2xl transition">
       <div class="absolute -top-3 left-4 bg-emerald-500 text-white text-xs px-2 py-1 rounded-2xl">38% OFF, Save $30/mo</div>
       <div class="absolute -top-3 -right-3 bg-emerald-600 text-white text-xs px-3 py-1 rounded-2xl shadow-glass rotate-6">Best for students</div>
       <h3 class="font-bold">Muse.do Unlimited</h3>
       <ul class="mt-3 text-sm list-disc pl-5 space-y-1"><li>Unlimited AI Usage</li><li>Theme & emoji pack</li><li>Multiple gardens + widgets</li><li>Web push reminders</li><li>Templates & tag analytics</li><li>Unlimited CSV export</li><li>Local/cloud sync (unlimited)</li><li>Streak repair (1×/week)</li></ul>
-      <button id="unlockBtn1" class="mt-4 inline-block rounded-2xl bg-roseglass-400 text-white px-4 py-2 hover:brightness-105" onclick="location.href='App/inside-app.html'">Start Yearly Plan</button>
+      <button id="unlockBtn1" class="mt-4 inline-block rounded-2xl bg-roseglass-400 text-white px-4 py-2 hover:brightness-105" data-target="App/inside-app.html">Start Yearly Plan</button>
     </div>
     <div class="relative rounded-2xl border border-rose-100 bg-white/70 p-6 hover:-translate-y-1 hover:shadow-xl transition">
       <div class="absolute -top-3 -right-3 bg-purple-600 text-white text-xs px-3 py-1 rounded-2xl shadow-glass rotate-6">Best for creators</div>
       <h3 class="font-bold">Muse.do Pro</h3>
       <ul class="mt-3 text-sm list-disc pl-5 space-y-1"><li>Unlimited AI Usage</li><li>Theme & emoji pack</li><li>Multiple gardens + widgets</li><li>Web push reminders</li><li>Templates & tag analytics</li><li>Unlimited CSV export</li><li>Local/cloud sync (unlimited)</li><li>Streak repair (1×/week)</li></ul>
-      <button id="unlockBtn2" class="mt-4 inline-block rounded-2xl border border-rose-200 px-4 py-2 hover:bg-white" onclick="location.href='App/inside-app.html'">Start Monthly Plan</button>
+      <button id="unlockBtn2" class="mt-4 inline-block rounded-2xl border border-rose-200 px-4 py-2 hover:bg-white" data-target="App/inside-app.html">Start Monthly Plan</button>
     </div>
   </div>
 </section>
@@ -335,7 +338,72 @@
   </div>
 </div>
 
+<!-- AUTH MODAL (login + signup) -->
+<div id="loginModal" class="fixed inset-0 z-[60] hidden items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <button class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="toggleLogin(false)" aria-label="Close login"></button>
+  <div class="relative w-[92vw] max-w-md rounded-3xl border border-rose-100 bg-white/90 shadow-glass p-6">
+    <h3 id="loginTitle" class="text-xl font-bold text-rose-900">Sign in to continue</h3>
+
+    <!-- Google (chỉ hiện ở chế độ Sign up) -->
+    <div id="googleWrap" class="mt-4 hidden">
+      <button id="googleBtn" type="button" class="w-full rounded-2xl border border-rose-200 bg-white/90 py-2.5 hover:bg-white inline-flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 533.5 544.3" width="18" height="18" aria-hidden="true">
+          <path fill="#EA4335" d="M533.5 278.4c0-18.5-1.7-36.3-4.9-53.6H272.1v101.4h146.7c-6.3 34-25.3 62.7-54 82v67h87.2c51-47 81.5-116.2 81.5-196.8z"/>
+          <path fill="#34A853" d="M272.1 544.3c73.8 0 135.6-24.4 180.8-66.1l-87.2-67c-24.2 16.3-55.1 26-93.6 26-71.9 0-132.9-48.6-154.7-114.1H27.8v71.7c45 89.1 137.7 149.5 244.3 149.5z"/>
+          <path fill="#4A90E2" d="M117.4 323.1c-5.6-16.7-8.8-34.6-8.8-53.1s3.2-36.4 8.8-53.1v-71.7H27.8C10 178.5 0 219.6 0 270s10 91.5 27.8 124.9l89.6-71.8z"/>
+          <path fill="#FBBC05" d="M272.1 106.5c40.1 0 76 13.8 104.3 40.9l78.1-78.1C407.6 26.2 345.8 0 272.1 0 165.5 0 72.8 60.4 27.8 149.5l89.6 71.7c21.8-65.5 82.8-114.7 154.7-114.7z"/>
+        </svg>
+        <span id="googleBtnText">Sign up with Google</span>
+      </button>
+      <div class="flex items-center gap-2 my-3">
+        <div class="h-px bg-rose-200 flex-1"></div>
+        <span class="text-xs text-rose-500">hoặc</span>
+        <div class="h-px bg-rose-200 flex-1"></div>
+      </div>
+    </div>
+
+    <form id="loginForm" class="mt-4 space-y-3">
+      <!-- Name: chỉ hiện ở sign up -->
+      <label id="nameWrap" class="block hidden">
+        <span class="text-sm">Your name</span>
+        <input id="authName" type="text" class="mt-1 w-full rounded-xl border border-rose-200 bg-white/80 px-3 py-2 outline-none focus:ring-2 focus:ring-rose-300" placeholder="Nguyễn Văn A">
+      </label>
+      <label class="block">
+        <span class="text-sm">Email</span>
+        <input id="authEmail" type="email" required class="mt-1 w-full rounded-xl border border-rose-200 bg-white/80 px-3 py-2 outline-none focus:ring-2 focus:ring-rose-300" placeholder="you@domain.com">
+      </label>
+      <label class="block">
+        <span class="text-sm">Password</span>
+        <input id="authPwd" type="password" required minlength="6" class="mt-1 w-full rounded-xl border border-rose-200 bg-white/80 px-3 py-2 outline-none focus:ring-2 focus:ring-rose-300" placeholder="••••••••">
+      </label>
+      <button id="authSubmit" class="w-full rounded-2xl bg-roseglass-400 text-white py-2.5 shadow-glass hover:brightness-105" type="submit">Continue</button>
+          <p id="signupHint" class="mt-1 text-sm">
+      <button id="toSignup" type="button" class="underline text-rose-700 hover:text-roseglass-400">
+        Don't have an account? Sign up
+      </button>
+    </p>
+
+      <!-- link đảo chiều (chỉ hiện ở sign up) -->
+      <p id="loginBack" class="hidden text-xs text-center">
+        Already have an account?
+        <button id="toLogin" type="button" class="underline text-rose-700 hover:text-roseglass-400">Sign Up</button>
+      </p>
+
+      <p id="loginError" class="hidden text-sm text-red-600">Authentication failed. Please try again.</p>
+    </form>
+
+    <button class="absolute top-3 right-3 h-9 w-9 rounded-full border border-rose-200 bg-white/80 text-rose-700 hover:bg-white" onclick="toggleLogin(false)" aria-label="Close">✕</button>
+  </div>
+</div>
+
 <script>
+  // ---------- Utility: simple client auth token ----------
+  const AUTH_KEY = 'musedo_auth';
+  function isAuthed(){ try{ const v = JSON.parse(localStorage.getItem(AUTH_KEY)||'null'); if(!v) return false; // optional expiry 30 days
+    return Date.now() - (v.ts||0) < 30*24*60*60*1000; } catch{ return false; } }
+  function setAuth(email, name){ const token = { email, name: name||'', ts: Date.now() }; localStorage.setItem(AUTH_KEY, JSON.stringify(token)); }
+  function clearAuth(){ localStorage.removeItem(AUTH_KEY); }
+
   // ---------- anchors smooth ----------
   document.querySelectorAll('a[href^="#"]').forEach(a=>{
     a.addEventListener('click',e=>{ const id=a.getAttribute('href').slice(1); const el=document.getElementById(id); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); } });
@@ -501,9 +569,9 @@
   const BUY_URL='https://your-lemonsqueezy-checkout';     // sửa link thật
   const COUPON_PARAM='discount';                           // đổi nếu provider dùng key khác
   const COUPON_CODE='50OFF-SEP';                           // mã của bạn
-  function toggleOffer(on){ document.getElementById('offer').classList[on?'remove':'add']('hidden'); document.getElementById('offer').classList.add('flex'); }
-  document.getElementById('unlockBtn1').onclick=()=>toggleOffer(true);
-  document.getElementById('unlockBtn2').onclick=()=>toggleOffer(true);
+  function toggleOffer(on){ const el=document.getElementById('offer'); el.classList[on?'remove':'add']('hidden'); el.classList.add('flex'); }
+  document.getElementById('unlockBtn1').addEventListener('click', ()=> requireAuthNavigate(document.getElementById('unlockBtn1').dataset.target));
+  document.getElementById('unlockBtn2').addEventListener('click', ()=> requireAuthNavigate(document.getElementById('unlockBtn2').dataset.target));
   document.getElementById('claim').onclick=(e)=>{
     e.preventDefault();
     try{ const u=new URL(BUY_URL); if(COUPON_PARAM&&COUPON_CODE) u.searchParams.set(COUPON_PARAM,COUPON_CODE); location.href=u.toString(); }
@@ -511,6 +579,91 @@
   };
 
   document.getElementById('y').textContent=new Date().getFullYear();
+
+  // ---------- Auth-gate: intercept any attempt to go to inside app ----------
+function setLoginMode(mode){
+  const title=document.getElementById('loginTitle');
+  const nameWrap=document.getElementById('nameWrap');
+  const googleWrap=document.getElementById('googleWrap');
+  const signupHint=document.getElementById('signupHint');
+  const loginBack=document.getElementById('loginBack');
+  const googleBtnText=document.getElementById('googleBtnText');
+
+  if(mode==='signup'){
+    title.textContent='Create your account';
+    nameWrap.classList.remove('hidden');
+    googleWrap.classList.remove('hidden');
+    signupHint.classList.add('hidden');
+    loginBack.classList.remove('hidden');
+    googleBtnText.textContent='Sign up with Google';
+    document.getElementById('authSubmit').textContent='Create account';
+  }else{
+    title.textContent='Sign in to continue';
+    nameWrap.classList.add('hidden');
+    googleWrap.classList.add('hidden');
+    signupHint.classList.remove('hidden');
+    loginBack.classList.add('hidden');
+    googleBtnText.textContent='Continue with Google';
+    document.getElementById('authSubmit').textContent='Continue';
+  }
+}
+function toggleLogin(on, mode){
+  const m=document.getElementById('loginModal');
+  if(mode) setLoginMode(mode);
+  m.classList[on?'remove':'add']('hidden'); m.classList.add('flex');
+  if(on){ setTimeout(()=> m.querySelector('input[type=email]')?.focus(), 0); }
+}
+
+  function requireAuthNavigate(targetHref){
+    if (isAuthed()) { location.href = targetHref; }
+    else { pendingHref = targetHref; toggleLogin(true); }
+  }
+
+  let pendingHref = 'App/inside-app.html';
+
+  // 1) Intercept App links (nhận biết Sign up)
+  document.addEventListener('click',(e)=>{
+    const a = e.target.closest('a.auth-link'); if(!a) return;
+    const href = a.getAttribute('href') || '';
+    const wantSignup = a.dataset.mode === 'signup' || href.includes('#signup');
+    if(!isAuthed()){
+      e.preventDefault();
+      pendingHref = href.replace('#signup','');
+      toggleLogin(true, wantSignup ? 'signup' : 'login');
+    }
+  });
+
+  // 2) Handle login form (demo only)
+  document.getElementById('loginForm').addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const email = document.getElementById('authEmail')?.value?.trim();
+    const name  = document.getElementById('authName')?.value?.trim();
+    if(!email) return;
+    setAuth(email, name);
+    toggleLogin(false);
+    location.href = pendingHref || 'App/inside-app.html';
+  });
+
+  // Chuyển mode bằng link trong modal
+  document.getElementById('toSignup')?.addEventListener('click', ()=> setLoginMode('signup'));
+  document.getElementById('toLogin')?.addEventListener('click', ()=> setLoginMode('login'));
+
+  // Google (stub – sau bạn thay bằng GIS)
+  function googleAuth(){
+    setAuth('google-user@example.com','Google User');
+    toggleLogin(false);
+    location.href = pendingHref || 'App/inside-app.html';
+  }
+  document.getElementById('googleBtn')?.addEventListener('click', googleAuth);
+
+  // 3) If landing opened with ?login=1 (redirected from app), show modal
+  try{
+    const qp = new URLSearchParams(location.search);
+    if(!isAuthed()){
+      if(qp.get('login')==='1')  toggleLogin(true,'login');
+      if(qp.get('signup')==='1') toggleLogin(true,'signup');
+    }
+  }catch{}
 </script>
 </body>
 </html>
