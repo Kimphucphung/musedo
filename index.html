@@ -366,7 +366,7 @@
       <!-- Name: chỉ hiện ở sign up -->
       <label id="nameWrap" class="block hidden">
         <span class="text-sm">Your name</span>
-        <input id="authName" type="text" class="mt-1 w-full rounded-xl border border-rose-200 bg-white/80 px-3 py-2 outline-none focus:ring-2 focus:ring-rose-300" placeholder="Nguyễn Văn A">
+        <input id="authName" type="text" class="mt-1 w-full rounded-xl border border-rose-200 bg-white/80 px-3 py-2 outline-none focus:ring-2 focus:ring-rose-300" placeholder="Vanessa Kim">
       </label>
       <label class="block">
         <span class="text-sm">Email</span>
@@ -396,7 +396,7 @@
   </div>
 </div>
 
-<script>
+<script type="module">
   // ---------- Utility: simple client auth token ----------
   const AUTH_KEY = 'musedo_auth';
   function isAuthed(){ try{ const v = JSON.parse(localStorage.getItem(AUTH_KEY)||'null'); if(!v) return false; // optional expiry 30 days
@@ -408,6 +408,10 @@
   document.querySelectorAll('a[href^="#"]').forEach(a=>{
     a.addEventListener('click',e=>{ const id=a.getAttribute('href').slice(1); const el=document.getElementById(id); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); } });
   });
+
+  // Make module-scoped functions callable from inline onclick
+  window.toggleLogin = toggleLogin;
+  window.toggleOffer = toggleOffer;
 
   // ---------- typewriter (sticky prefix) ----------
   const phrases=[
@@ -453,7 +457,7 @@
     const nextBtn = document.getElementById('benefitNext');
     const dotsWrap= document.getElementById('benefitDots');
 
-    let cur = 0; // 👉 bắt đầu ở card TRÁI (mobile). Desktop vẫn xòe 3 thẻ.
+    let cur = 0;
 
     // dots
     if (dotsWrap){
@@ -566,10 +570,10 @@
   });
 
   // ---------- Offer modal ----------
-  const BUY_URL='https://your-lemonsqueezy-checkout';     // sửa link thật
-  const COUPON_PARAM='discount';                           // đổi nếu provider dùng key khác
-  const COUPON_CODE='50OFF-SEP';                           // mã của bạn
-  function toggleOffer(on){ const el=document.getElementById('offer'); el.classList[on?'remove':'add']('hidden'); el.classList.add('flex'); }
+  const BUY_URL='https://your-lemonsqueezy-checkout';     
+  const COUPON_PARAM='discount';                           
+  const COUPON_CODE='50OFF-SEP';                         
+  function toggleOffer(on){ const el=document.getElementById('offer'); el.classList.toggle('hidden', !on); el.classList.toggle('flex',   on); }
   document.getElementById('unlockBtn1').addEventListener('click', ()=> requireAuthNavigate(document.getElementById('unlockBtn1').dataset.target));
   document.getElementById('unlockBtn2').addEventListener('click', ()=> requireAuthNavigate(document.getElementById('unlockBtn2').dataset.target));
   document.getElementById('claim').onclick=(e)=>{
@@ -580,90 +584,126 @@
 
   document.getElementById('y').textContent=new Date().getFullYear();
 
-  // ---------- Auth-gate: intercept any attempt to go to inside app ----------
-function setLoginMode(mode){
-  const title=document.getElementById('loginTitle');
-  const nameWrap=document.getElementById('nameWrap');
-  const googleWrap=document.getElementById('googleWrap');
-  const signupHint=document.getElementById('signupHint');
-  const loginBack=document.getElementById('loginBack');
-  const googleBtnText=document.getElementById('googleBtnText');
+  // ---- Firebase SDKs ----
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import {
+    getAuth, setPersistence, browserLocalPersistence,
+    GoogleAuthProvider, signInWithPopup,
+    createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-  if(mode==='signup'){
-    title.textContent='Create your account';
-    nameWrap.classList.remove('hidden');
-    googleWrap.classList.remove('hidden');
-    signupHint.classList.add('hidden');
-    loginBack.classList.remove('hidden');
-    googleBtnText.textContent='Sign up with Google';
-    document.getElementById('authSubmit').textContent='Create account';
-  }else{
-    title.textContent='Sign in to continue';
-    nameWrap.classList.add('hidden');
-    googleWrap.classList.add('hidden');
-    signupHint.classList.remove('hidden');
-    loginBack.classList.add('hidden');
-    googleBtnText.textContent='Continue with Google';
-    document.getElementById('authSubmit').textContent='Continue';
-  }
-}
-function toggleLogin(on, mode){
-  const m=document.getElementById('loginModal');
-  if(mode) setLoginMode(mode);
-  m.classList[on?'remove':'add']('hidden'); m.classList.add('flex');
-  if(on){ setTimeout(()=> m.querySelector('input[type=email]')?.focus(), 0); }
-}
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDYguh3q6kSKHMQIlx1_M6Kc2N28N7Sio",
+    authDomain: "musedo-b6a21.firebaseapp.com",
+    projectId: "musedo-b6a21",
+    storageBucket: "musedo-b6a21.appspot.com",
+    messagingSenderId: "840299933623",
+    appId: "1:840299933623:web:c01ac0b487d37358d08232",
+    measurementId: "G-1K2X7XQ9DQ"
+  };
 
-  function requireAuthNavigate(targetHref){
-    if (isAuthed()) { location.href = targetHref; }
-    else { pendingHref = targetHref; toggleLogin(true); }
-  }
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  await setPersistence(auth, browserLocalPersistence); // giữ phiên sau khi chuyển trang
 
+  // ===== Modal helpers (giữ nguyên UI bạn có) =====
+  let authMode = 'login';             // 'login' | 'signup'
   let pendingHref = 'App/inside-app.html';
 
-  // 1) Intercept App links (nhận biết Sign up)
+  function setLoginMode(mode){
+    authMode = mode;
+    const title=document.getElementById('loginTitle');
+    const nameWrap=document.getElementById('nameWrap');
+    const googleWrap=document.getElementById('googleWrap');
+    const signupHint=document.getElementById('signupHint');
+    const loginBack=document.getElementById('loginBack');
+    const googleBtnText=document.getElementById('googleBtnText');
+
+    if(mode==='signup'){
+      title.textContent='Create your account';
+      nameWrap.classList.remove('hidden');
+      googleWrap.classList.remove('hidden');
+      signupHint.classList.add('hidden');
+      loginBack.classList.remove('hidden');
+      googleBtnText.textContent='Sign up with Google';
+      document.getElementById('authSubmit').textContent='Create account';
+    }else{
+      title.textContent='Sign in to continue';
+      nameWrap.classList.add('hidden');
+      googleWrap.classList.add('hidden');
+      signupHint.classList.remove('hidden');
+      loginBack.classList.add('hidden');
+      googleBtnText.textContent='Continue with Google';
+      document.getElementById('authSubmit').textContent='Continue';
+    }
+  }
+  function toggleLogin(on, mode){
+    const m=document.getElementById('loginModal');
+    if(mode) setLoginMode(mode);
+    m.classList.toggle('hidden', !on);
+    m.classList.toggle('flex',   on);
+    if(on){ setTimeout(()=> m.querySelector('input[type=email]')?.focus(), 0); }
+  }
+
+  // ===== Intercept tất cả =====
   document.addEventListener('click',(e)=>{
     const a = e.target.closest('a.auth-link'); if(!a) return;
-    const href = a.getAttribute('href') || '';
-    const wantSignup = a.dataset.mode === 'signup' || href.includes('#signup');
-    if(!isAuthed()){
-      e.preventDefault();
-      pendingHref = href.replace('#signup','');
-      toggleLogin(true, wantSignup ? 'signup' : 'login');
-    }
-  });
-
-  // 2) Handle login form (demo only)
-  document.getElementById('loginForm').addEventListener('submit',(e)=>{
     e.preventDefault();
-    const email = document.getElementById('authEmail')?.value?.trim();
-    const name  = document.getElementById('authName')?.value?.trim();
-    if(!email) return;
-    setAuth(email, name);
-    toggleLogin(false);
-    location.href = pendingHref || 'App/inside-app.html';
+    const href = a.getAttribute('href') || 'App/inside-app.html';
+    pendingHref = href.replace('#signup','');
+    const wantSignup = a.dataset.mode === 'signup' || href.includes('#signup');
+    toggleLogin(true, wantSignup ? 'signup' : 'login');
   });
 
-  // Chuyển mode bằng link trong modal
-  document.getElementById('toSignup')?.addEventListener('click', ()=> setLoginMode('signup'));
-  document.getElementById('toLogin')?.addEventListener('click', ()=> setLoginMode('login'));
-
-  // Google (stub – sau bạn thay bằng GIS)
-  function googleAuth(){
-    setAuth('google-user@example.com','Google User');
-    toggleLogin(false);
-    location.href = pendingHref || 'App/inside-app.html';
-  }
-  document.getElementById('googleBtn')?.addEventListener('click', googleAuth);
-
-  // 3) If landing opened with ?login=1 (redirected from app), show modal
-  try{
-    const qp = new URLSearchParams(location.search);
-    if(!isAuthed()){
-      if(qp.get('login')==='1')  toggleLogin(true,'login');
-      if(qp.get('signup')==='1') toggleLogin(true,'signup');
+  // ===== Google Sign-in =====
+  document.getElementById('googleBtn')?.addEventListener('click', async ()=>{
+    try{
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      await signInWithPopup(auth, provider);
+      toggleLogin(false);
+      location.href = pendingHref;
+    }catch(e){
+      document.getElementById('loginError').classList.remove('hidden');
+      console.error(e);
     }
-  }catch{}
+  });
+
+  // ===== Email/Password (login & signup) =====
+  document.getElementById('loginForm')?.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    document.getElementById('loginError').classList.add('hidden');
+
+    const email = document.getElementById('authEmail')?.value?.trim();
+    const pwd   = document.getElementById('authPwd')?.value?.trim();
+    const name  = document.getElementById('authName')?.value?.trim();
+
+    try{
+      if(authMode === 'signup'){
+        const cred = await createUserWithEmailAndPassword(auth, email, pwd);
+        if (name) await updateProfile(cred.user, { displayName: name });
+      }else{
+        await signInWithEmailAndPassword(auth, email, pwd);
+      }
+      toggleLogin(false);
+      location.href = pendingHref;
+    }catch(e){
+      document.getElementById('loginError').classList.remove('hidden');
+      console.error(e);
+    }
+  });
+
+  // Links đổi mode trong modal
+  document.getElementById('toSignup')?.addEventListener('click', ()=> setLoginMode('signup'));
+  document.getElementById('toLogin')?.addEventListener('click',  ()=> setLoginMode('login'));
+
+  // Các nút “Start plan / Try free …” nếu cần yêu cầu đăng nhập
+  function requireAuthNavigate(targetHref){
+    if (auth.currentUser) location.href = targetHref;
+    else { pendingHref = targetHref; toggleLogin(true, 'login'); }
+  }
+  document.getElementById('unlockBtn1')?.addEventListener('click', ()=> requireAuthNavigate(document.getElementById('unlockBtn1').dataset.target));
+  document.getElementById('unlockBtn2')?.addEventListener('click', ()=> requireAuthNavigate(document.getElementById('unlockBtn2').dataset.target));
 </script>
 </body>
 </html>
