@@ -47,12 +47,36 @@
     .blob{filter:blur(60px);opacity:.7}
     /* Garden visuals */
     .garden-water {background: radial-gradient(120% 120% at 50% 0%, #fdf2f8 0%, #ffe4e6 35%, #fbcfe8 70%, #f5d0fe 100%);} 
-    .island {position:relative;width:90%;max-width:760px;margin: auto; height:380px;border-radius:50% 50% 45% 55% / 60% 40% 60% 40%;background: radial-gradient(60% 60% at 50% 40%, #bbf7d0 0%, #86efac 45%, #22c55e 60%, #16a34a 75%, #0ea5e9 120%);box-shadow: inset 0 8px 30px rgba(0,0,0,.15), 0 15px 40px rgba(0,0,0,.25);}    .flower {position:absolute; transform-origin: bottom center;} 
+    .island {position:relative;width:90%;max-width:760px;margin: auto; height:380px;border-radius:50% 50% 45% 55% / 60% 40% 60% 40%;background: radial-gradient(60% 60% at 50% 40%, #bbf7d0 0%, #86efac 45%, #22c55e 60%, #16a34a 75%, #0ea5e9 120%);box-shadow: inset 0 8px 30px rgba(0,0,0,.15), 0 15px 40px rgba(0,0,0,.25);}    
+    .flower {position:absolute; transform-origin: bottom center;} 
     .flower svg {filter: drop-shadow(0 6px 10px rgba(0,0,0,.1));}
     .flower.sm {transform: translate(-50%, -100%) scale(.8)  rotate(var(--rot,0deg));}
     .flower.md {transform: translate(-50%, -100%) scale(1)    rotate(var(--rot,0deg));}
     .flower.lg {transform: translate(-50%, -100%) scale(1.35) rotate(var(--rot,0deg));}
   </style>
+  <style>
+  /* Ảnh nền toàn trang (thay nền hồng) */
+  .bg-hero{
+    background-image: url('Asset/copilot-hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  /* Phủ 1 lớp be để chữ dễ đọc + chuyển dần xuống #F8F7F2 */
+  .bg-hero::after{
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(
+      to bottom,
+      rgba(255,255,255,.75) 0%,
+      rgba(248,247,242,.85) 40%,
+      rgba(248,247,242,1) 70%
+    );
+  }
+
+  /* Tắt các lớp nền hồng cũ nếu còn */
+  .themed-blob{ display:none !important; }
+</style>
   <style>
   /* ===== AI FAB & Panel (khớp aesthetic rose/glass) ===== */
   .ai-body{                     
@@ -123,7 +147,7 @@
 <body class="theme-gradient min-h-screen text-rose-900 relative overflow-x-hidden">
   <div class="bg-hero absolute inset-0 -z-10"></div>
   <!-- dreamy backdrop -->
-  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-pink-100 via-rose-100 to-fuchsia-100"></div>
+  <div class="bg-hero absolute inset-0 -z-10"></div>
   <div class="blob themed-blob fixed -top-24 -left-28 h-80 w-80 rounded-full bg-pink-200"></div>
   <div class="blob themed-blob fixed top-40 -right-20 h-96 w-96 rounded-full bg-fuchsia-200"></div>
   <div class="blob themed-blob fixed bottom-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose-200"></div>
@@ -312,7 +336,7 @@
             <div class="text-right">
               <div class="text-xs text-rose-700/70">Completion</div>
               <div id="dayCompletion" class="text-xl font-black">0%</div>
-              <div class="text-[10px] inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-1 mt-1">✨ vibe: <span id="vibe" class="font-semibold">Seed</span></div>
+              <div class="text-[10px] inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-1 mt-1">vibe: <span id="vibe" class="font-semibold">Seed</span></div>
             </div>
           </div>
 

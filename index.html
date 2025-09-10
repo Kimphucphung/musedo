@@ -18,7 +18,16 @@
   .tilt-inner{transform-style:preserve-3d;transition:transform .2s ease}
 </style>
 <style>
-  /* 3-card fan-out: mỗi card tự căn giữa theo left:50% rồi offset bằng --x */
+  /* Hero dùng ảnh nền */
+  .ms-hero {
+    background-image: url('Asset/copilot-hero-bg.jpg');
+    background-size: cover;
+    background-position: center top; /* hoặc center */
+    background-repeat: no-repeat;
+  }
+</style>
+<style>
+  /* 3-card fan-out */
   .fan3-card{
     position:absolute; top:0; left:50%;
     width:320px; height:190px; border-radius:16px;
@@ -90,7 +99,7 @@
   .lottie-badge > div{ width:100%; height:100%; }
 </style>
 </head>
-<body class="min-h-screen bg-gradient-to-b from-rose-50 via-pink-50 to-white text-rose-900">
+<body class="min-h-screen bg-[#F8F7F2] text-rose-900">
 <header class="sticky top-0 z-30 backdrop-blur bg-white/40 border-b border-rose-100">
   <div class="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
     <a href="#top" class="font-black text-2xl">muse.<span class="text-roseglass-400">do</span></a>
@@ -113,10 +122,7 @@
 <div id="top"></div>
 
 <!-- HERO -->
-<section class="relative overflow-hidden">
-  <div class="blob absolute -top-24 -left-24 h-72 w-72 rounded-full bg-rose-200/70"></div>
-  <div class="blob absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-pink-200/70"></div>
-
+<section class="relative overflow-hidden ms-hero">
   <div class="mx-auto max-w-6xl px-4 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
     <div>
       <h1 id="heroTxt" class="text-4xl md:text-5xl font-black leading-tight min-h-[3.2rem]">muse.do for humans<span class="animate-pulse">▍</span></h1>
@@ -157,7 +163,8 @@
     <!-- Left -->
     <article class="fan3-card">
       <div class="flex items-start gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="30px" fill="#881337"><path d="m438-240 226-226-58-58-169 169-84-84-57 57 142 142ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/></svg>        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="30px" fill="#881337"><path d="m438-240 226-226-58-58-169 169-84-84-57 57 142 142ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/></svg>        
+        <div>
           <h3 class="font-semibold">Task Automation</h3>
           <p class="mt-1 text-sm text-rose-700">Auto tracking, simple reports — less setup, more doing.</p>
         </div>
@@ -209,7 +216,8 @@
     <div class="rounded-2xl border border-rose-100 bg-white/70 p-5 shadow-sm hover:-translate-y-1 hover:shadow-xl transition">
       <div class="flex items-center gap-3">
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#881337"><path d="M280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h400q33 0 56.5 23.5T760-840v124q18 7 29 22t11 34v80q0 19-11 34t-29 22v404q0 33-23.5 56.5T680-40H280Zm0-80h400v-720H280v720Zm0 0v-720 720Zm200-40q17 0 28.5-11.5T520-200q0-17-11.5-28.5T480-240q-17 0-28.5 11.5T440-200q0 17 11.5 28.5T480-160Z"/></svg>
-        <h3 class="font-semibold">PWA mobile</h3></div>
+        <h3 class="font-semibold">PWA mobile</h3>
+      </div>
       <p class="mt-2 text-rose-700 text-sm">Install to Home Screen in 2 taps. Light and fast.</p>
     </div>
     <div class="rounded-2xl border border-rose-100 bg-white/70 p-5 shadow-sm hover:-translate-y-1 hover:shadow-xl transition">
@@ -303,7 +311,7 @@
   <div class="mt-6 space-y-3" id="faqWrap"></div>
 </section>
 
-<footer class="border-t border-rose-100 py-8 text-center text-sm text-rose-600">© <span id="y"></span> muse.do</footer>
+<footer class="border-t border-rose-100 py-8 text-center text-sm text-rose-600">© <span id="y"></span> muse.do 2025</footer>
 
 <!-- Discount Modal -->
 <div id="offer" class="fixed inset-0 z-50 hidden items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="offerTitle">
@@ -553,11 +561,12 @@
 
   // ---------- FAQ ----------
   const faqs=[
-    ['How does the garden grow?','Complete daily tasks. 2–4 = small flower, 5–6 = medium, ≥7 = big.'],
-    ['What’s in the Free plan?','Core tasks, 1 garden, timer, weekly/monthly report, limited cloud sync.'],
-    ['Garden+ vs Creator Pro?','Garden+: themes, unlimited CSV export, streak repair. Creator Pro: multi-gardens, push reminders, templates & tag analytics.'],
-    ['Is it a native mobile app?','It’s a fast PWA. Install to Home Screen on iOS/Android. No app store required.'],
-    ['Can I cancel anytime?','Yes, cancel anytime without losing your data.']
+    ['I’m busy and easily distracted. How does Muse help me stay consistent?','Muse aims for one tiny win a day. Streaks and the Achievement Garden reward consistency, and gentle nudges bring you back without pressure.'],
+    ['Why focus on tiny tasks? How is this different from a regular to-do app?','Small, finishable tasks reduce overwhelm and create momentum. Muse prioritizes completion rate, streaks, and weekly recaps over heavy planning.'],
+    ['I hate setup. Do I need projects or boards to start?','No setup required. Open, add a task, tick it. Tags and templates are optional for when you want more organization.'],
+    ['Does Muse work offline and across devices?','Yes. It’s a PWA—works offline and can be installed on your phone/desktop. Sign in with Google to sync your data across devices.'],
+    ['Where is my data stored? Does Muse read my content?','By default, data is stored locally on your device. When you sign in, it syncs to your private cloud doc. No ads. AI only processes what you explicitly send, and you can export or delete data anytime.'],
+    ['Can I cancel anytime?','Yes, you can cancel anytime without losing your data.']
   ];
   const faqWrap=document.getElementById('faqWrap');
   faqs.forEach(([q,a])=>{
